@@ -9,7 +9,6 @@ $newSize.Height = 30
 $newSize.Width = 125
 $psWindow.WindowSize= $newSize
 
-$black = "black"
 #Importing Functions
 $I = ls | select name
 Foreach ($F in $I) {
@@ -19,4 +18,4 @@ Foreach ($F in $I) {
     } 
 } 
 
-Welcome-Menu
+Welcome_Menu

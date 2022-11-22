@@ -1,4 +1,4 @@
-function Enumeration-Menu-1 {
+function Enumeration_Menu_1 {
     clear-host
     Write-Output "#########################################################################################################################"
     write-Output "#########################################   \\ENUMERATION//   ###########################################################"
@@ -10,7 +10,8 @@ function Enumeration-Menu-1 {
     $EOption = Read-Host    "                     Please Choose an option"
 
     Switch ($EOption) {
-        B { Welcome-Menu }
+        1 { Local_Enumerations_Menu }
+        B { Welcome_Menu }
         Q { Exit }
     } 
 }
