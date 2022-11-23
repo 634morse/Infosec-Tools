@@ -45,11 +45,47 @@ function Basic_Host_Info {
 function Get_Local_Network_Info {
     Write-output "Reminder: Make sure you have the Appropriate rights to Enumerate the host"
     $IsRemoteMachine = Read-Host "Is this a remote machine? (Yes/No)"
+    If ($IsRemoteMachine -match "Yes") {
+        $Cred = Get-Credential
+        $DeviceName = Read-Host "Please Enter the HostName to Enumerate"
+        $NetworkAdapters = Get-CimInstance win32_networkadapterconfiguration | select Caption, IPSubnet, IPAddress, MacAddress, DHCPServer, DNSHostName
+    }
+    If ($IsRemoteMachine -match "No") {
+        $NetworkAdapters = Get-CimInstance win32_networkadapterconfiguration | select Caption, IPSubnet, IPAddress, MacAddress, DHCPServer, DNSHostName
+    }
+    Foreach ($NetworkAdapter in $NetworkAdapters) {
+        If ($null -ne $NetworkAdapter.IPAddress) {
+            $Adapter_Name = $NetworkAdapter.caption
+            Write-output "Network Adapter Info"
+            write-output "                    "
+            Write-output $Adapter_Name
+            $Table = New-Object PSObject -Property @{
+                AdapterName     = $Adapter_Name
+            }
+            $Table = $Table | Select AdapterName
+            
+        }
+    }
+    $Table
+    $Option = Read-Host "
+    [1] Run Another Lookup
+    [2] Return To Local Enumeration
+    [3] Exit
+    "
+    switch ($Option) {
+        1 { Get_Local_Network_Info }
+        2 { Local_Enumerations_Menu }
+        3 { Exit }
 
-    Get-CimInstance
-    get-cimclass win32_networkadapterconfiguration | select IPSubnet, IPAddress, MacAddress, DHCPServer, DNSHostName
-    get-cimclass win32_useraccount | select -expand cimclassproperties | Select Name,CimType
+    }
 }
+
+
+ 
+    # Get-CimInstance win32_networkadapterconfiguration | select Caption, IPSubnet, IPAddress, MacAddress, DHCPServer, DNSHostName
+    # get-cimclass win32_networkadapterconfiguration | select IPSubnet, IPAddress, MacAddress, DHCPServer, DNSHostName
+    # get-cimclass win32_useraccount | select -expand cimclassproperties | Select Name,CimType
+
 
 
 function Gather_Local_User_Info {
@@ -86,6 +122,7 @@ function Local_Enumerations_Menu {
     Switch ($LEOption) {
 
         1 {Basic_Host_Info}
+        3 {Get_Local_Network_Info}
         B { Welcome-Menu }
         Q { Exit }
     }
