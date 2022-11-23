@@ -3,20 +3,14 @@ function Basic_Host_Info {
     $IsRemoteMachine = Read-Host "Is this a remote machine? (Yes/No)"
     If ($IsRemoteMachine -match "Yes") {
         $Cred = Get-Credential
-    }
-    $DeviceName = Read-Host "Please Enter the HostName to Enumerate"
-
-    $ISHostLocal = Get-CimInstance -classname Win32_OperatingSystem | select CSName
-    
-    If ($DeviceName -Like $ISHostLocal.CSName) {
-        $BHI = get-ciminstance -classname Win32_OperatingSystem | select caption, csname, version, OSArchitecture, RegisteredUser, LastBootUpTime
-    }
-    else {
+        $DeviceName = Read-Host "Please Enter the HostName to Enumerate"
         $Session = New-CimSession -ComputerName $DeviceName $Credential
         $BHI = get-ciminstance -classname Win32_OperatingSystem -CimSession $Session | select caption, csname, version, OSArchitecture, RegisteredUser, LastBootUpTime
     }
+    If ($IsRemoteMachine -match "No") {
+        $BHI = get-ciminstance -classname Win32_OperatingSystem | select caption, csname, version, OSArchitecture, RegisteredUser, LastBootUpTime
+    }
 
-    $BHI = get-ciminstance -classname Win32_OperatingSystem | select caption, csname, version, OSArchitecture, RegisteredUser, LastBootUpTime
     $BHI_Name = $BHI.csname
     $BHI_OS = $BHI.caption
     $BHI_OS_Version = $BHI.version
@@ -35,8 +29,39 @@ function Basic_Host_Info {
     $Table = $Table | Select HostName, RegisteredUser, LastRebootTime, OS, OS_Version, OS_Architecture
     clear-host
     $Table
-    Read-Host "Select 1 to go back to the menu, 2 to Exit"
+    $Option = Read-Host "
+    [1] Run Another Lookup
+    [2] Return To Local Enumeration
+    [3] Exit
+    "
+    switch ($Option) {
+        1 { Basic_Host_Info }
+        2 { Local_Enumerations_Menu }
+        3 { Exit }
+
+    }
 }
+
+function Get_Local_Network_Info {
+    Write-output "Reminder: Make sure you have the Appropriate rights to Enumerate the host"
+    $IsRemoteMachine = Read-Host "Is this a remote machine? (Yes/No)"
+
+    Get-CimInstance
+    get-cimclass win32_networkadapterconfiguration | select IPSubnet, IPAddress, MacAddress, DHCPServer, DNSHostName
+    get-cimclass win32_useraccount | select -expand cimclassproperties | Select Name,CimType
+}
+
+
+function Gather_Local_User_Info {
+    Write-output "Reminder: Make sure you have the Appropriate rights to Enumerate the host"
+    $IsRemoteMachine = Read-Host "Is this a remote machine? (Yes/No)"
+    If ($IsRemoteMachine -match "Yes") {
+        $Cred = Get-Credential
+        $DeviceName = Read-Host "Please Enter the HostName to Enumerate"
+    }
+}
+
+
 function Local_Enumerations_Menu {
     clear-host
     Write-output ""
