@@ -53,20 +53,32 @@ function Get_Local_Network_Info {
     If ($IsRemoteMachine -match "No") {
         $NetworkAdapters = Get-CimInstance win32_networkadapterconfiguration | select Caption, IPSubnet, IPAddress, MacAddress, DHCPServer, DNSHostName
     }
+    Clear-Host
     Foreach ($NetworkAdapter in $NetworkAdapters) {
         If ($null -ne $NetworkAdapter.IPAddress) {
             $Adapter_Name = $NetworkAdapter.caption
-            Write-output "Network Adapter Info"
-            write-output "                    "
-            Write-output $Adapter_Name
-            $Table = New-Object PSObject -Property @{
-                AdapterName     = $Adapter_Name
-            }
-            $Table = $Table | Select AdapterName
+            $Adapter_IPAddress = $NetworkAdapter.IPAddress
+            $Adapter_Subnet = $NetworkAdapter.IPSubnet
+            $Adapter_DNSHostName = $NetworkAdapter.DNSHostName
+            $Adapter_DHCPServer = $NetworkAdapter.DHCPServer
+            $Adapter_MacAddress = $NetworkAdapter.MacAddress
             
+            Write-output "
+                Network Adapter Info
+            "
+            $Table = New-Object PSObject -Property @{
+                Adapter_Name     = $Adapter_Name
+                IPAddress        = $Adapter_IPAddress
+                Subnet           = $Adapter_Subnet
+                DNSHostName      = $Adapter_DNSHostName
+                DHCPServer       = $Adapter_DHCPServer
+                MacAddress       = $Adapter_MacAddress
+            }
+            $Table = $Table | Select Adapter_Name, IPAddress, Subnet, DNSHostName, DHCPServer, MacAddress
+            
+            $Table
         }
     }
-    $Table
     $Option = Read-Host "
     [1] Run Another Lookup
     [2] Return To Local Enumeration
@@ -97,34 +109,4 @@ function Gather_Local_User_Info {
     }
 }
 
-
-function Local_Enumerations_Menu {
-    clear-host
-    Write-output ""
-    Write-output ""
-    Write-output ""
-    Write-output " __________________________________________________________________________________"
-    Write-output "|##################################################################################|"                                                                       
-    Write-output "|#       __                _    _____                           _   _             #|"
-    Write-output "|#      |  |   ___ ___ ___| |  |   __|___ _ _ _____ ___ ___ ___| |_|_|___ ___     #|"
-    Write-output "|#      |  |__| . |  _| .'| |  |   __|   | | |     | -_|  _| .'|  _| | . |   |    #|"
-    Write-output "|#      |_____|___|___|__,|_|  |_____|_|_|___|_|_|_|___|_| |__,|_| |_|___|_|_|    #|"                                                                      
-    Write-output "|##################################################################################|"
-    Write-output "                                                                                    "
-    Write-output "              [1] To Gather Basic info On a Host (OS/Hostname/ETC), Select 1        "
-    Write-output "              [2] To Gather User Info On a Host, Select 2                           "
-    Write-output "              [3] To Gather Network Info On a Host, Select 3                        "
-    Write-output "              [B] To Return to the Main Menu, Select B                              "
-    Write-output "              [Q] To Quite, Select Q                                                " 
-    Write-Output "                                                                                    "
-    $LEOption= Read-Host "        Please Select an option:                                             "
-
-    Switch ($LEOption) {
-
-        1 {Basic_Host_Info}
-        3 {Get_Local_Network_Info}
-        B { Welcome-Menu }
-        Q { Exit }
-    }
-}
  

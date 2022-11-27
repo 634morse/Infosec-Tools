@@ -1,0 +1,34 @@
+This is a list of features that I would like to build into this Suite
+
+Enumeration:
+    Local Enumeration:(using builtin powershell commands)
+        Gain Some basic info on a machine
+        Gain Basic Networking info on a machine
+        Enumerate Users on a machine (include all accounts, Local admins, RDP admins)
+        Create these tools to be ran against a single machine or a list of machines in a csv
+
+    Active Directory Enumeration:
+        Gather group member ship (single group/multiple groups/all groups)
+        Gather a list of all Users
+        Gather a list of enabled Users
+        Gather a list of Non service account Users
+        Gather a list of Computer objects
+        Enumerate Group policy
+
+    Nmap Enumeration:
+        Run port scans against single or a list of hosts/ip ranges
+            Be able to choost between Ping/Stealthy/Normal/Aggressive scans
+            Be able to test FTP Anon, smb signing, etc
+
+
+
+Red-team/attack tools:
+    Create a reverse shell function: (Powercat)
+
+Security Features:
+    Regenerate file hashes Upon execution?
+    Rename Files on Execution?
+    Run all commands/functions/files in memory only
+
+Other:
+    Create a comprehensive, clear and concise Readme file
