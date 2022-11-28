@@ -59,6 +59,7 @@ function Enumeration_Menu_1 {
 
   Switch ($EOption) {
       1 { Local_Enumerations_Menu }
+      2 { AD_Enumeration_Menu }
       B { Welcome_Menu }
       Q { Exit }
   }
@@ -81,6 +82,7 @@ function Local_Enumerations_Menu {
   |#      |_____|___|___|__,|_|  |_____|_|_|___|_|_|_|___|_| |__,|_| |_|___|_|_|    #|
   |##################################################################################|
 
+              [s] To stage creds, Select S
               [1] To Gather Basic info On a Host (OS/Hostname/ETC), Select 1
               [2] To Gather User Info On a Host, Select 2
               [3] To Gather Network Info On a Host, Select 3
@@ -92,9 +94,10 @@ function Local_Enumerations_Menu {
 
   Switch ($LEOption) {
 
-      1 {Basic_Host_Info}
-      3 {Get_Local_Network_Info}
-      4 {Welcome_Menu}
+      2 { Stage_Creds }
+      1 { Basic_Host_Info } 
+      3 { Get_Local_Network_Info }
+      4 { Welcome_Menu }
       Q { Exit }
   }
 }
@@ -112,5 +115,37 @@ function Documentation {
   switch ($Option) {
    1 { Welcome_Menu }
   }
+}
+
+#######################
+#Active Directory Menu#
+#######################
+
+function AD_Enumeration_Menu {
+  Clear-Host
+  Write-Output "
+  #####################################################################################
+  #####################################################################################
+  #                   _   _             _____  _               _                      #
+  #         /\       | | (_)           |  __ \(_)             | |                     #
+  #        /  \   ___| |_ ___   _____  | |  | |_ _ __ ___  ___| |_ ___  _ __ _   _    #
+  #       / /\ \ / __| __| \ \ / / _ \ | |  | | | '__/ _ \/ __| __/ _ \| '__| | | |   #
+  #      / ____ \ (__| |_| |\ V /  __/ | |__| | | | |  __/ (__| || (_) | |  | |_| |   #
+  #     /_/    \_\___|\__|_| \_/ \___| |_____/|_|_|  \___|\___|\__\___/|_|   \__, |   # 
+  #            ______                                      _   _                / /   #
+  #           |  ____|                                    | | (_)              / /    #
+  #           | |__   _ __  _   _ _ __ ___   ___ _ __ __ _| |_ _  ___  _ __           #
+  #           |  __| | '_ \| | | | '_ ` _ \ / _ \ '__/ _` | __| |/ _ \| '_ \          #
+  #           | |____| | | | |_| | | | | | |  __/ | | (_| | |_| | (_) | | | |         #
+  #           |______|_| |_|\__,_|_| |_| |_|\___|_|  \__,_|\__|_|\___/|_| |_|         # 
+  #                                                                                   #                                                           
+  #####################################################################################
+  #####################################################################################
+
+                        [1] To Gather User Info Select 1
+                        [2] To Gather Group Membership select 2
+                        [3] To Enumerate Group Policy select 3
+                                                                         
+"
 }
 
