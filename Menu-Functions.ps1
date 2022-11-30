@@ -20,6 +20,9 @@ function Welcome_Menu {
     Author: Corey Patterson
     Version: 0.1
 
+    Updates:
+    $Available_Updates
+
                         [1] Select '1' to view documentation
                         [2] Select '2' if you want to Run Enumeration
                         [3] Select '3' If you want to take a look at the Random Tools
