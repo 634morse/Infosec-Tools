@@ -26,7 +26,9 @@ function Welcome_Menu {
                         [1] Select '1' to view documentation
                         [2] Select '2' if you want to Run Enumeration
                         [3] Select '3' If you want to take a look at the Random Tools
+                        [U] Select 'U' If you would like to view dependecy versions
                         [Q] Select 'Q' If you would like to Quite
+                        
 
     "
     $Option = Read-Host    "                        Please Choose an option"      
@@ -34,8 +36,31 @@ function Welcome_Menu {
     Switch ($Option) {
             1 { Documentation }
             2 { Enumeration_Menu_1 }
+            U { update_menu }
             Q { Exit }
         }
+}
+
+
+######################
+######Update Menu#####
+######################
+
+function update_menu {
+  clear-Host
+  write-output "
+#######################################################################  
+##          ##__ __ ____  ____    ___  ______  ____  __ ##          ###
+# ##      ##  || || || \\ || \\  // \\ | || | ||    (( \  ##      ##  # 
+#   ##  ##    || || ||_// ||  )) ||=||   ||   ||==   \\     ##  ##    #
+#     ##      \\_// ||    ||_//  || ||   ||   ||___ \_))      ##      #
+#######################################################################                                           
+                      
+                 Dependencies:
+                     Nmap: $Nmap_Message
+
+"
+$option = Read-Host "Select an option"
 }
 
 ######################

@@ -21,4 +21,6 @@ Foreach ($F in $I) {
 
 Nmap_updater
 
+Available_Updates
+
 Welcome_Menu
