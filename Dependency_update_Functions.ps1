@@ -4,7 +4,8 @@
 #You will need to manually extract the files
 #################################################################
 $global:Nmap_Message = "Nmap is up to date"
-function Nmap_updater {
+function Nmap_update {
+$ProgressPreference = 'SilentlyContinue'
 $HTML = Invoke-WebRequest "https://nmap.org/download#windows"
 $HTML = $HTML.Links | Select href
 $HTML = $HTML -match "setup.exe"
@@ -14,13 +15,12 @@ $HTML = $HTML -split("-")
 $Newest_Nmap_Release = $HTML[1]
 
 $Nmap_properties = get-itemproperty ".\Dependencies\Nmap\nmap.exe"
-$Current_Nmap_version = $Nmap_properties.versioninfo.fileversion
+$global:Current_Nmap_version = $Nmap_properties.versioninfo.fileversion
 
     If ($Current_Nmap_version -notmatch $Newest_Nmap_Release) {
         $global:Nmap_Update = $true
-        $global:Nmap_Message = "New version of Nmap Available - $Newest_Nmap_Release
-        "
-        #Invoke-WebRequest -uri $download_url -outfile ".\Dependencies\Nmap.exe"
+        $global:Nmap_Message = "##New version of Nmap Available - $Newest_Nmap_Release##"
+        $global:Download_Nmap = Invoke-WebRequest -uri $download_url -outfile ".\Dependencies\Nmap.exe"
     }
     else {
         $global:Nmap_Update = $false 
@@ -33,3 +33,6 @@ function Available_Updates {
         $global:Available_Updates = write-output "There are updates available for dependencies, please select U, to view them" 
     }
 }
+
+
+
