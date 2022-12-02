@@ -1,3 +1,6 @@
+$Host.UI.RawUI.WindowTitle = " C.A.R.P.E."
+$Host.UI.RawUI.BackgroundColor = "Black"
+
 $pshost = Get-Host
 $psWindow = $pshost.UI.RawUI
 $newSize =$psWindow.BufferSize
@@ -9,8 +12,10 @@ $newSize.Height = 35
 $newSize.Width = 150
 $psWindow.WindowSize= $newSize
 
-$Host.UI.RawUI.WindowTitle = " C.A.R.P.E."
-$Host.UI.RawUI.BackgroundColor = "Black"
+$global:ProgressPreference = 'SilentlyContinue'
+
+# $Host.UI.RawUI.WindowTitle = " C.A.R.P.E."
+# $Host.UI.RawUI.BackgroundColor = "Black"
 
 
 #Importing Functions
@@ -22,7 +27,7 @@ Foreach ($F in $I) {
     } 
 } 
 
-Nmap_updater
+Nmap_update_check
 
 Available_Updates
 

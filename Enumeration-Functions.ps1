@@ -132,6 +132,7 @@ function Get_AD_User_Info {
     $ADUsers = Read-Host "Enter the Name of the user(s), for multiple users, seperate by a comma"
     foreach ($ADUser in $ADUsers) {
     Get-ADUser $ADUser | select Name
+    return
     }
 }
 

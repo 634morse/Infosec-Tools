@@ -14,4 +14,4 @@ Design:
 Local Enumeration:
 
 
-    
+     #get-childitem .\Dependencies\Nmap.exe | foreach {.\Dependencies\7-Zip\7z.exe e -y $_.fullname}

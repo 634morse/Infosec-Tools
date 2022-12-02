@@ -57,17 +57,20 @@ function update_menu {
 #####################################################################################################################################################                                           
                       
 Dependencies:
-     Nmap: Current version $Current_Nmap_version  ##$Nmap_Message##
+     NAME:              Current Version:                       Current Release:   
+
+     Nmap:              $Current_Nmap_version                       ##$Nmap_Message##
 
 
                                   To run all updates, Press '1'
                                   To Run an individual update, type the name of the dependency
+                                  To Refer to help documentation on how dependencies need to be updated, type 'help'
 "
 $option = Read-Host "Select an option"
 
 switch ($option) {
   1 {}
-  Nmap { $Download_Nmap | Nmap_update }
+  Nmap { Download_Nmap }
 }
 
 }
