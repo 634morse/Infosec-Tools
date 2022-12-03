@@ -5,7 +5,6 @@
 #################################################################
 function Nmap_update_check {
 $global:Nmap_Message = "Nmap is up to date"
-$ProgressPreference = 'SilentlyContinue'
 $HTML = Invoke-WebRequest "https://nmap.org/download#windows"
 $HTML = $HTML.Links | Select href
 $HTML = $HTML -match "setup.exe"
@@ -33,6 +32,36 @@ function Download_Nmap {
     Start-Sleep -seconds 3
     update_menu
 }
+
+function 7zip_update_check {
+    $global:7zip_message = "7zip is up to date"
+    $HTML = Invoke-WebRequest "https://www.7-zip.org/download.html"
+    $HTML = $HTML.Links | select href
+    $HTML = $HTML | where-object -filterscript {$_.href -match "exe"  -and $_.href -notmatch "-x64"}
+    $7zip_Online_Version = $HTML.href -replace ".exe"
+    $7zip_Online_Version = $7zip_Online_Version -replace "a/7z"
+    $7zip_Online_Version = $7zip_Online_Version -replace "r"
+    $7zip_Online_Version = $7zip_Online_Version -replace "-am64"
+    $7zip_Online_Version = $7zip_Online_Version -replace "-am"
+    $Newest_7zip_release = $7zip_Online_Version[0]
+    
+    $7zip_properties = get-itemproperty ".\Dependencies\7-Zip\7z.exe"
+    $global:current_7zip_version = $7zip_properties.VersionInfo.fileversion
+    $global:current_7zip_version = $global:current_7zip_version -replace "\."
+
+    If ($Current_7zip_version -notmatch $Newest_7zip_Release) {
+        $global:7zip_Update = $true
+        $global:7zip_Message = "##New version of 7zip Available - $Newest_7zip_Release##"
+    }
+    else {
+        $global:7zip_Update = $false 
+    }
+
+    $global:7zip_download_url = "https://www.7-zip.org/a/7z$Newest_7zip_release-x64.exe"
+
+}
+
+function Download
 
 function Available_Updates {
     $global:Available_Updates = "No available updates at this time"
