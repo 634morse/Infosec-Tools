@@ -60,7 +60,7 @@ Dependencies:
      NAME:              Current Version:                       Current Release:   
 
      Nmap:              $Current_Nmap_version                       ##$Nmap_Message##
-
+     7zip:              $Current_7zip_version                        ##$7zip_Message##
 
                                   To run all updates, Press '1'
                                   To Run an individual update, type the name of the dependency
@@ -93,6 +93,7 @@ function Enumeration_Menu_1 {
   
                       [1] If you want to gather local information on Host(s,) Please Select 1
                       [2] If you would like to gather Active Directory Info, Please Select 2
+                      [3] If you would like to run Nmap Scans, PLease Select 3
                       [B] If you would like to return to the Main Menu, Please Select B
   "
  $EOption = Read-Host "                     Please Choose an option"
@@ -100,6 +101,7 @@ function Enumeration_Menu_1 {
   Switch ($EOption) {
       1 { Local_Enumerations_Menu }
       2 { AD_Enumeration_Menu }
+      3 { Nmap_network_discovery_menu }
       B { Welcome_Menu }
       Q { Exit }
   }
@@ -188,4 +190,26 @@ function AD_Enumeration_Menu {
                                                                          
 "
 }
+
+function Nmap_network_discovery_menu {
+  clear-host
+  Write-Output "
+##################################################################################################################################################### 
+##          ##          ##           ##          ##          ##  _  _  _   _   _   ___  ##          ##          ##          ##          ##          #
+  ##      ##  ##      ##  ##       ##  ##      ##  ##      ## # | \| || \_/ | / \ | o \ # ##      ##  ##      ##  ##      ##  ##      ##  ##      ##
+    ##  ##      ##  ##      ##  ##       ##  ##      ##  ##   # | \\ || \_/ || o ||  _/ #   ##  ##      ##  ##      ##  ##      ##  ##      ##  ##
+      ##          ##          ##           ##          ##     # |_|\_||_| |_||_n_||_|   #     ##          ##          ##          ##          ##
+#####################################################################################################################################################                       
+  
+                                       [PingScan] To run a PingScan
+
+                                                                                
+"
+$Option = read-host "Please Type in the name of the scan you would like to run"
+
+switch ($Option) {
+  PingScan { nmap_ping_scan }
+}
+}
+
 

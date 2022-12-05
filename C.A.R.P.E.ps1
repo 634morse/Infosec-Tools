@@ -1,5 +1,14 @@
+try {
+    Set-ExecutionPolicy "Allsigned" -scopt localmachine
+}
+
+catch {
+    #Do nothing
+}
+
 $Host.UI.RawUI.WindowTitle = " C.A.R.P.E."
 $Host.UI.RawUI.BackgroundColor = "Black"
+$Host.UI.RawUI.ForegroundColor = "Magenta"
 
 $pshost = Get-Host
 $psWindow = $pshost.UI.RawUI
@@ -13,10 +22,10 @@ $newSize.Width = 150
 $psWindow.WindowSize= $newSize
 
 $global:ProgressPreference = 'SilentlyContinue'
+$global:date = Get-Date -Format "MM-dd-yyyy"
+$global:env:Path += '.\Dependencies\Nmap'
 
-# $Host.UI.RawUI.WindowTitle = " C.A.R.P.E."
-# $Host.UI.RawUI.BackgroundColor = "Black"
-
+#Clean Temp folder
 
 #Importing Functions
 $I = ls | select name
@@ -28,6 +37,7 @@ Foreach ($F in $I) {
 } 
 
 Nmap_update_check
+7zip_update_check
 
 Available_Updates
 

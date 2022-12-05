@@ -136,4 +136,44 @@ function Get_AD_User_Info {
     }
 }
 
+##################################
+#Nmap Network Discovery Functions#
+##################################
 
+function nmap_ping_scan {
+    do { $option = Read-host "
+    [1] To import hosts/subnets from csv
+    [2] To manually choose hosts/subnets to scan
+    "
+    } until ($option -eq "1" -or $option -eq "2")    
+    If ($option -eq "1"){
+        $Ranges = Read-host "Please enter the full path of the csv file"
+    }
+    elseif ($option -eq "2") {
+        $Ranges = Read-Host "
+    Enter an ip, subnet or multiple subnets to scan
+    Formats accepted
+    Single IP: 192.168.1.50
+    CIDR Notation: 192.168.1.1/24
+    IP Range: 192.168.1.1-192.168.1.254
+        "
+    }
+    do { $Export = Read-Host "Export data to csv? [Y/N]"
+    } until ($Export -eq "Y" -or $Export -eq "N")
+    If ( $Export -eq "Y" ) {
+        $ExportPath = Read-Host "Enter Disired location to store the csv file"
+    }
+    else {
+        $ExportPath = ".\temp\pingscan-$date.csv"
+    }
+   write-output "Scanning Now"
+   $pingscan = nmap $Ranges -sn -oX .\temp\pingscan-$date.xml
+   $global:ParsePingScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
+   write-output "done scanning"
+   write-output $ParsePingScan
+
+
+   $Option = read-host "
+   To run another pingscan, select [1]
+   To return to the Nmap Menu, Select [2]"
+}

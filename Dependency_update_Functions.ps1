@@ -61,11 +61,17 @@ function 7zip_update_check {
 
 }
 
-function Download
+function Download_7zip {
+    Write-Output "Downloading Newest Version of 7zip"
+    Invoke-WebRequest $7zip_download_url -OutFile ".\Dependencies\"
+    write-output "7zip EXE has been downloaded, and is located in the dependencies folder, please extract and replace the current 7zip folder"
+    Start-Sleep -seconds 3
+    update_menu
+}
 
 function Available_Updates {
     $global:Available_Updates = "No available updates at this time"
-    If ($Nmap_Update) {
+    If ($Nmap_Update -or $7zip_Update) {
         $global:Available_Updates = write-output "There are updates available for dependencies, please select U, to view them" 
     }
 }
