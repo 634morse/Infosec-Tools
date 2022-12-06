@@ -30,11 +30,11 @@ function Basic_Host_Info {
     $BHI_LASTBOOT_TIME = $BHI.LastBootUpTime
 
     $Table = New-Object PSObject -Property @{
-        HostName = $BHI_Name
-        RegisteredUser = $BHI_Reg_user
-        LastRebootTime = $BHI_LASTBOOT_TIME
-        OS       = $BHI_OS
-        OS_Version = $BHI_OS_Version
+        HostName        = $BHI_Name
+        RegisteredUser  = $BHI_Reg_user
+        LastRebootTime  = $BHI_LASTBOOT_TIME
+        OS              = $BHI_OS
+        OS_Version      = $BHI_OS_Version
         OS_Architecture = $BHI_OSARCH
     }
     $Table = $Table | Select HostName, RegisteredUser, LastRebootTime, OS, OS_Version, OS_Architecture
@@ -78,12 +78,12 @@ function Get_Local_Network_Info {
                 Network Adapter Info
             "
             $Table = New-Object PSObject -Property @{
-                Adapter_Name     = $Adapter_Name
-                IPAddress        = $Adapter_IPAddress
-                Subnet           = $Adapter_Subnet
-                DNSHostName      = $Adapter_DNSHostName
-                DHCPServer       = $Adapter_DHCPServer
-                MacAddress       = $Adapter_MacAddress
+                Adapter_Name = $Adapter_Name
+                IPAddress    = $Adapter_IPAddress
+                Subnet       = $Adapter_Subnet
+                DNSHostName  = $Adapter_DNSHostName
+                DHCPServer   = $Adapter_DHCPServer
+                MacAddress   = $Adapter_MacAddress
             }
             $Table = $Table | Select Adapter_Name, IPAddress, Subnet, DNSHostName, DHCPServer, MacAddress
             
@@ -105,9 +105,9 @@ function Get_Local_Network_Info {
 
 
  
-    # Get-CimInstance win32_networkadapterconfiguration | select Caption, IPSubnet, IPAddress, MacAddress, DHCPServer, DNSHostName
-    # get-cimclass win32_networkadapterconfiguration | select IPSubnet, IPAddress, MacAddress, DHCPServer, DNSHostName
-    # get-cimclass win32_useraccount | select -expand cimclassproperties | Select Name,CimType
+# Get-CimInstance win32_networkadapterconfiguration | select Caption, IPSubnet, IPAddress, MacAddress, DHCPServer, DNSHostName
+# get-cimclass win32_networkadapterconfiguration | select IPSubnet, IPAddress, MacAddress, DHCPServer, DNSHostName
+# get-cimclass win32_useraccount | select -expand cimclassproperties | Select Name,CimType
 
 
 
@@ -131,8 +131,8 @@ function Gather_Local_User_Info {
 function Get_AD_User_Info {
     $ADUsers = Read-Host "Enter the Name of the user(s), for multiple users, seperate by a comma"
     foreach ($ADUser in $ADUsers) {
-    Get-ADUser $ADUser | select Name
-    return
+        Get-ADUser $ADUser | select Name
+        return
     }
 }
 
@@ -141,12 +141,13 @@ function Get_AD_User_Info {
 ##################################
 
 function nmap_ping_scan {
-    do { $option = Read-host "
+    do {
+        $option = Read-host "
     [1] To import hosts/subnets from csv
     [2] To manually choose hosts/subnets to scan
     "
     } until ($option -eq "1" -or $option -eq "2")    
-    If ($option -eq "1"){
+    If ($option -eq "1") {
         $Ranges = Read-host "Please enter the full path of the csv file"
         $Ranges = Import-csv $Ranges
     }
@@ -159,31 +160,36 @@ function nmap_ping_scan {
     IP Range: 192.168.1.1-192.168.1.254
     "
     }
-    do { $Export = Read-Host "Export data to csv? [Y/N]"
+    do {
+        $Export = Read-Host "Export data to csv? [Y/N]"
     } until ($Export -eq "Y" -or $Export -eq "N")
     If ( $Export -eq "Y" ) {
         $ExportPath = Read-Host "Enter Desired location to store the csv file"
     }
-   write-output "Scanning Now"
-   foreach ($Range in $Ranges) {
-    write-output $Range
-    $Range = $Range.range
-   $pingscan = nmap $Range -sn -oX .\temp\pingscan-$date.xml
-   $global:ParsePingScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
-   if ($null -ne $ExportPath) {
-    $ParsePingScan | export-csv $ExportPath -Append -NoTypeInformation
-   } 
-   write-output "done scanning"
-   write-output $ParsePingScan
+    write-output "Scanning Now"
+    If ($option -eq "1") {
+        foreach ($Range in $Ranges) {
+            write-output $Range
+            $Range = $Range.range
+            $pingscan = nmap $Range -sn -oX .\temp\pingscan-$date.xml
+            $global:ParsePingScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
+            if ($null -ne $ExportPath) {
+                $ParsePingScan | export-csv $ExportPath -Append -NoTypeInformation
+            } 
+            write-output "done scanning, csv file stored here: $ExportPath"
+        }
     }
- 
-
-   $Option = read-host "
+    elseif ($option -eq "2") {
+        $pingscan = nmap $Ranges -sn -oX .\temp\pingscan-$date.xml
+        $global:ParsePingScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
+        $ParsePingScan
+    }
+    $Option = read-host "
    To run another pingscan, select [1]
    To return to the Nmap Menu, Select [2]"
 
-   switch ($Option) {
-    1 { nmap_ping_scan }
-    2 { Nmap_network_discovery_menu }
-   }
+    switch ($Option) {
+        1 { nmap_ping_scan }
+        2 { Nmap_network_discovery_menu }
+    }
 }

@@ -23,7 +23,7 @@ $psWindow.WindowSize= $newSize
 
 $global:ProgressPreference = 'SilentlyContinue'
 $global:date = Get-Date -Format "MM-dd-yyyy"
-$global:env:Path += '.\Dependencies\Nmap'
+$env:Path += '.\Dependencies\Nmap'
 
 #Clean Temp folder
 
