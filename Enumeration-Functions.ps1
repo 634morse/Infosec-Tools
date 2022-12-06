@@ -148,6 +148,7 @@ function nmap_ping_scan {
     } until ($option -eq "1" -or $option -eq "2")    
     If ($option -eq "1"){
         $Ranges = Read-host "Please enter the full path of the csv file"
+        $Ranges = Import-csv $Ranges
     }
     elseif ($option -eq "2") {
         $Ranges = Read-Host "
@@ -156,24 +157,33 @@ function nmap_ping_scan {
     Single IP: 192.168.1.50
     CIDR Notation: 192.168.1.1/24
     IP Range: 192.168.1.1-192.168.1.254
-        "
+    "
     }
     do { $Export = Read-Host "Export data to csv? [Y/N]"
     } until ($Export -eq "Y" -or $Export -eq "N")
     If ( $Export -eq "Y" ) {
-        $ExportPath = Read-Host "Enter Disired location to store the csv file"
-    }
-    else {
-        $ExportPath = ".\temp\pingscan-$date.csv"
+        $ExportPath = Read-Host "Enter Desired location to store the csv file"
     }
    write-output "Scanning Now"
-   $pingscan = nmap $Ranges -sn -oX .\temp\pingscan-$date.xml
+   foreach ($Range in $Ranges) {
+    write-output $Range
+    $Range = $Range.range
+   $pingscan = nmap $Range -sn -oX .\temp\pingscan-$date.xml
    $global:ParsePingScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
+   if ($null -ne $ExportPath) {
+    $ParsePingScan | export-csv $ExportPath -Append -NoTypeInformation
+   } 
    write-output "done scanning"
    write-output $ParsePingScan
-
+    }
+ 
 
    $Option = read-host "
    To run another pingscan, select [1]
    To return to the Nmap Menu, Select [2]"
+
+   switch ($Option) {
+    1 { nmap_ping_scan }
+    2 { Nmap_network_discovery_menu }
+   }
 }
