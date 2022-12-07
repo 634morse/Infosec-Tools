@@ -202,13 +202,14 @@ function Nmap_network_discovery_menu {
 #####################################################################################################################################################                       
   
                                        [PingScan] To run a PingScan
-
+                                       [PortScan] To run a Port Scan
                                                                                 
 "
-$Option = read-host "Please Type in the name of the scan you would like to run"
+$global:NOption = read-host "Please Type in the name of the scan you would like to run"
 
-switch ($Option) {
-  PingScan { nmap_ping_scan }
+switch ($NOption) {
+  PingScan { nmap_scan }
+  PortScan { nmap_scan }
 }
 }
 

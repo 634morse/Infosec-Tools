@@ -140,16 +140,20 @@ function Get_AD_User_Info {
 #Nmap Network Discovery Functions#
 ##################################
 
-function nmap_ping_scan {
-    do {
-        $option = Read-host "
-    [1] To import hosts/subnets from csv
+function nmap_scan {
+    Do {
+    $option = Read-host "
+    [1] To import hosts/subnets from csv (column-name needs to be 'range')
     [2] To manually choose hosts/subnets to scan
     "
     } until ($option -eq "1" -or $option -eq "2")    
     If ($option -eq "1") {
+        do {
         $Ranges = Read-host "Please enter the full path of the csv file"
+        $Test_path = Test-Path $Ranges
         $Ranges = Import-csv $Ranges
+        } Until ($Test_path)
+
     }
     elseif ($option -eq "2") {
         $Ranges = Read-Host "
@@ -163,29 +167,53 @@ function nmap_ping_scan {
     do {
         $Export = Read-Host "Export data to csv? [Y/N]"
     } until ($Export -eq "Y" -or $Export -eq "N")
-    If ( $Export -eq "Y" ) {
+    If ( $Export -eq "Y") {
         $ExportPath = Read-Host "Enter Desired location to store the csv file"
     }
-    write-output "Scanning Now"
-    If ($option -eq "1") {
+    
+    ###PingScan###
+    If ($NOption -eq "pingscan" -and $Export -eq "y") {
         foreach ($Range in $Ranges) {
             write-output $Range
             $Range = $Range.range
-            $pingscan = nmap $Range -sn -oX .\temp\pingscan-$date.xml
+            write-output "Scanning Now"
+            $pingscan = nmap $Ranges -sn -oX .\temp\pingscan-$date.xml
             $global:ParsePingScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
-            if ($null -ne $ExportPath) {
-                $ParsePingScan | export-csv $ExportPath -Append -NoTypeInformation
-            } 
+            $ParsePingScan | select HostName, Status, IPv4, Mac | export-csv $ExportPath -Append -NoTypeInformation  
             write-output "done scanning, csv file stored here: $ExportPath"
         }
     }
-    elseif ($option -eq "2") {
+    elseif ($NOption -eq "pingscan" -and $Export -eq "n") {
+        write-output "Scanning Now"
         $pingscan = nmap $Ranges -sn -oX .\temp\pingscan-$date.xml
         $global:ParsePingScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
         $ParsePingScan
     }
+    ###PortScan###
+    If ($NOption -eq "portscan") {
+        $Ports = Read-host "List ports to scan:
+        Single port (1)
+        Comma Delimited (1,2,3)
+        Range (1-10)
+        All to scan all ports
+        "
+        If ($Ports -eq "All") {
+            $Scan = nmap $Range
+        }
+        else {
+            $Scan = nmap $Range $Ports
+        }
+        If ($Export -eq "y") {
+            foreach ($Range in $Ranges) {
+                write-output $Range
+                $Range = $Range.range
+                $portscan = nmap $Range -p $Ports 
+            }
+        }
+        El
+    }   
     $Option = read-host "
-   To run another pingscan, select [1]
+   To run another scan, select [1]
    To return to the Nmap Menu, Select [2]"
 
     switch ($Option) {
@@ -193,3 +221,4 @@ function nmap_ping_scan {
         2 { Nmap_network_discovery_menu }
     }
 }
+
