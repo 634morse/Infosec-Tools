@@ -6,6 +6,7 @@ Enumeration:
         Gain Basic Networking info on a machine
         Enumerate Users on a machine (include all accounts, Local admins, RDP admins)
         Create these tools to be ran against a single machine or a list of machines in a csv
+        Gather wifi pks creds
 
     Active Directory Enumeration:
         Gather group member ship (single group/multiple groups/all groups)
