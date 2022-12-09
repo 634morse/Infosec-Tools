@@ -1,3 +1,4 @@
+function test {
 #Discovering Servers with Port 445 Open
 $SMBHosts = Nmap -p 445 172.28.1.1/24 -oX .\temp\SMB-Export.xml
 $SMBHosts = .\Dependencies\Parse-Nmap.ps1 .\temp\SMB-Export.xml
@@ -33,4 +34,5 @@ Foreach ($File in $Files) {
     $i++
     Write-Progress -Activity "Crawling Files - " -Status "Crawled: $i of $File_Count"
     
+}
 }

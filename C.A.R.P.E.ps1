@@ -29,16 +29,14 @@ $env:path += ';.\Dependencies\Nmap'
 Remove-item -Path .\temp\* -recurse -force
 
 #Importing Functions
-$I = ls | select name
+$I = ls .\Modules| select name
 Foreach ($F in $I) {
     $FName = $F.name
-    if ($F -match "Functions") {
-        Import-Module .\$FName
-    } 
+    Import-Module .\Modules\$FName
 } 
 
 Nmap_update_check
-7zip_update_check
+7zip_update_check 
 
 Available_Updates
 
