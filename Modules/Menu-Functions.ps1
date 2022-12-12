@@ -24,10 +24,10 @@ function Welcome_Menu {
     $Available_Updates                                                                                                                           
                                                                                                                                                  
                             [1] Select '1' to view documentation                                                                                 
-                            [2] Select '2' if you want to Run Enumeration                                                                        
+                            [2] Select '2' if you want to Run Enumeration/Discovery                                                                        
                             [3] Select '3' If you want to take a look at the Random Tools                                                        
                             [U] Select 'U' If you would like to view dependecy versions                                                          
-                            [Q] Select 'Q' If you would like to Quite                                                                            
+                            [Q] Select 'Q' If you would like to Quite                                                                          
                                                                                                                                                 
 
     "
@@ -37,6 +37,7 @@ function Welcome_Menu {
             1 { Documentation }
             2 { Enumeration_Menu_1 }
             U { update_menu }
+            s { SMB_Prowler_Menu }
             Q { Exit }
         }
 }
@@ -82,18 +83,25 @@ switch ($option) {
 function Enumeration_Menu_1 {
   clear-host
   Write-output "
-                      ________________________________________________________________________ 
-                      |  _____ _   _ _   _ __  __ _____ ____      _  _____ ___ ___  _   _    |
-                      |  | ____| \ | | | | |  \/  | ____|  _ \    / \|_   _|_ _/ _ \| \ | |  |
-                      |  |  _| |  \| | | | | |\/| |  _| | |_) |  / _ \ | |  | | | | |  \| |  |
-                      |  | |___| |\  | |_| | |  | | |___|  _ <  / ___ \| |  | | |_| | |\  |  |
-                      |  |_____|_| \_|\___/|_|  |_|_____|_| \_\/_/   \_\_| |___\___/|_| \_|  |
-                      |______________________________________________________________________|                                                                   
-  ################################## \\ Welcome to the Enumeration Menu! // ################################################
+                       _____  _                                                                      
+                      |  __ \(_)                                                                     
+                      | |  | |_ ___  ___ _____   _____ _ __ _   _                                    
+                      | |  | | / __|/ __/ _ \ \ / / _ \ '__| | | |                                   
+                      | |__| | \__ \ (_| (_) \ V /  __/ |  | |_| |                                   
+                      |_____/|_|___/\___\___/ \_/ \___|_|   \__, |                 _   _             
+                                      |  ____|               __/ |                | | (_)            
+                                      | |__   _ __  _   _ _ |___/_   ___ _ __ __ _| |_ _  ___  _ __  
+                                      |  __| | '_ \| | | | '_ ` _ \ / _ \ '__/ _` | __| |/ _ \| '_ \ 
+                                      | |____| | | | |_| | | | | | |  __/ | | (_| | |_| | (_) | | | |
+                                      |______|_| |_|\__,_|_| |_| |_|\___|_|  \__,_|\__|_|\___/|_| |_|
+                                                                                 
+                                                                                                                                                  
+                                Welcome to the Discovery/Enumeration Menu! 
   
                       [1] If you want to gather local information on Host(s,) Please Select 1
                       [2] If you would like to gather Active Directory Info, Please Select 2
-                      [3] If you would like to run Nmap Scans, PLease Select 3
+                      [3] If you would like to run Nmap Scans, Please Select 3
+                      [4] If you would like to run SMB Prowler
                       [B] If you would like to return to the Main Menu, Please Select B
   "
  $EOption = Read-Host "                     Please Choose an option"
@@ -102,6 +110,7 @@ function Enumeration_Menu_1 {
       1 { Local_Enumerations_Menu }
       2 { AD_Enumeration_Menu }
       3 { Nmap_network_discovery_menu }
+      4 { SMB_Prowler_Menu }
       B { Welcome_Menu }
       Q { Exit }
   }
@@ -214,17 +223,48 @@ switch ($NOption) {
 }
 
 Function SMB_Prowler_Menu {
+  Clear-Host
   $Host.UI.RawUI.ForegroundColor = "red"
-   write-output "    
-                              ░░▄▀░░░█▀▀░█▄█░█▀▄░░░░░░░█░░░█░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░      
-                              ░▀▄░░░░▀▀█░█░█░█▀▄░░░░░▄▀░░▄▀░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░      
-                              ░░░▀░░░▀▀▀░▀░▀░▀▀░░░░░░▀░░░▀░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░      
-                              ░░░░░░░░░░░░░░░░░░░░░░░█░░░█░░░░░█▀█░█▀▄░█▀█░█░█░█░░░█▀▀░█▀▄░░░▀▄░░░
-                              ░░░░░░░░░░░░░░░░░░░░░▄▀░░▄▀░░░░░░█▀▀░█▀▄░█░█░█▄█░█░░░█▀▀░█▀▄░░░░▄▀░░
-                              ░░░░░░░░░░░░░░░░░░░░░▀░░░▀░░░░░░░▀░░░▀░▀░▀▀▀░▀░▀░▀▀▀░▀▀▀░▀░▀░░░▀░░░░                                                                                                         
-                                                                                                      
-                                                        
+   Write-Host "  
+                                  __   _____ __  __ ____          ____                           
+                                 / /  / ____|  \/  |  _ \         / / /                           
+                                / /  | (___ | \  / | |_) |       / / /                            
+                               < <    \___ \| |\/| |  _ <       / / /                             
+                                \ \   ____) | |  | | |_) |     / / /                              
+                                 \_\ |_____/|_|__|_|____/     /_/_/  ______                   _              _
+                                                             / / /   |  __ \                 | |            \ \  
+                                                            / / /    | |__) | __ _____      _| | ___ _ __    \ \ 
+                                                           / / /     |  ___/ '__/ _ \ \ /\ / / |/ _ \ '__|    > >
+                                                          / / /      | |   | | | (_) \ V  V /| |  __/ |      / / 
+                                                         /_/_/       |_|   |_|  \___/ \_/\_/ |_|\___|_|     /_/  
+                                                                   
+                                                                   
+          SMB Prowler is a tool to Discover, Enumerate and Exfiltrate SMB Shares
+          With the use of Nmap and powershell
+          
+          Broken into Phases this tool can be used to do the following
+            Phase 1: Discovery
+                  First this Phase uses Nmap to discover hosts with smb port 445 open
+                  Then it uses net view on each of those hosts to see possible shares it can find
+
+            Phase 2: Enumeration
+                  With The data collected during Phase 1,
+                  We can start Enumerating (Directories, Files and the contents of Files)
+                    You can search for strings within files, or you can open them
+
+            Phase 3: Exfiltration
+                  Once you have ran through Discovery and Enumeration, you can find that juicy data and exfiltrate it
+
+                                                                                         
+                                                      
   "
+  $option = read-host "Please Select the Phase you would like to run (1/2/3)"
+
+  switch ($option) {
+    1 { SMB_Phase_1 }
+    2 {}
+    3 {}
+  }
 }
 
 
