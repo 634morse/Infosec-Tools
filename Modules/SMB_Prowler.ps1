@@ -1,3 +1,8 @@
+Function Get_SMB_Jobs {
+    Get-Job | Where-Object {$_.Name -match "Enum_Directories"}
+    $option = Read-host  "Press any button to return to SMB_Prowler Menu"
+    SMB_Prowler_Menu
+}
 
 #Phase 1: Discovery/Reconnaissance
 Function SMB_Phase_1 {
@@ -49,17 +54,14 @@ Function SMB_Phase_1 {
     $Device_List = Import-Csv $ExportPath
     write-host "      Beginning Host Share Discovery" -ForegroundColor Cyan
     start-sleep -s 1
-        
+     
+    
     Foreach ($Device in $Device_List) {
         $Device_IPv4 = $Device.IPv4
         write-host $Device_IPv4 -ForegroundColor Yellow
-        try {
         $Shares = net view /ALL \\$Device_IPv4\
-        }
-        catch {
-            write-host $Error -ForegroundColor Green
-        }
         #Found Online to Parse net view output
+        #May not need
         $Shares_List = @()
         $completed = $false
         for($x=0;$x -lt $Shares.count;$x++){
@@ -69,12 +71,19 @@ Function SMB_Phase_1 {
                     $content = $Shares[$next_line] -split '\s+'
                     $share_name = $content[0].Trim()
                     $custom_object = new-object PSObject
-                    if (($share_name -ne "ADMIN$") -and ($share_name -ne "C$") -and ($share_name -ne "IPC$") -and ($share_name -ne "The")) {
-                        $custom_object | add-member -MemberType NoteProperty -name 'Share_Name' -Value $share_name
-                        #write-host "$share_name"
+                     if (($share_name -ne "ADMIN$") -and ($share_name -ne "C$") -and ($share_name -ne "IPC$") -and ($share_name -ne "The")) {
+                        Write-Host $share_name
+                        $Table1 = New-Object PSObject -Property @{
+                            Host = $Device_IPv4
+                            Share = $share_name
+                        }
                     }
-                    $custom_object | write-host
-                    $Shares_List += $custom_object
+                
+                    $Table1 | select Host, Share | Export-Csv .\Exports\SMB_shares_$Date.csv -Append -NoTypeInformation
+                    # $custom_object | add-member -MemberType NoteProperty -name 'Share_Name' -Value $share_name
+                    # $custom_object | write-host
+                    #may not need
+                    # $Shares_List += $custom_object
                     if($Shares[$next_line] -like "*command completed*"){
                         $completed = $true
                     }
@@ -82,9 +91,9 @@ Function SMB_Phase_1 {
                 } until ($completed)
             }
         }
-        write-host $Shares_List
 
     }
+    write-host "      Shares stored here .\Exports\SMB_shares_$Date.csv" -ForegroundColor Cyan
     Read-Host "
     [1] to Move on to phase 2 [Enumeration]
     [2] to return to main menu
@@ -101,14 +110,60 @@ Function SMB_Phase_2 {
     [1] To Gather a list of Directories
     [2] To Gather a list of all files
     [3] To search files for words/Phrases/Etc
+    [4] To gather Directory Security Permissions
     "
     } until ($option -match "1" -or $option -match "2" -or $option -match "3")
+    #OPTION 1, Gathering Directories
     If ($option -eq "1") {
+        $option = Read-Host "
+            [1] To Import csv of shares
+            [2] To manually choose starting path
+        "
+        If ($option -eq "1") {
+            do {
+            $Shares_File = Read-host "      Please supply path of the csv to import"
+            $Test_Path = Test-Path $Shares_File
+            $Shares = Import-csv $Shares_File
+            } until ($Test_Path)
+        }
+        elseif ($option -eq "2") {
+            $Shares = Read-Host "       Please Supply the full path of the share you want to enumerate"
+        }
+        do {
+            $option = Read-Host "      
+                How Many Directories do you want to dig into?
+                Select a number, EX: 0,1,5,10,etc (0 will get the base folders within a directory)
+                Or Type 'MD' For Max depth
         
+        "
+        } until ( $option -eq "MD" -or $option -match "^\d+$" )
+        $Current_Path = $pwd.path
+        Start-ThreadJob -name Enum_Directories -ScriptBlock {
+            Foreach ($_ in $using:Shares) {
+                $SMB_Host = $_.Host
+                $SMB_share = $_.Share
+                If ( $using:option -eq "MD" ) {
+                    get-childitem -path \\$SMB_Host\$SMB_share -Directory -Recurse -ErrorAction SilentlyContinue | select FullName | export-csv $using:Current_Path\Exports\SMB_share-dir_enum_$using:Date.csv -Append -NoTypeInformation
+                }
+                elseif ( $using:option -match "^\d+$" ) {
+                    get-childitem -path \\$SMB_Host\$SMB_share -Directory -Recurse -Depth $using:option -ErrorAction SilentlyContinue | select FullName | export-csv $using:Current_Path\Exports\SMB_share-dir_enum_$using:Date.csv -Append -NoTypeInformation
+                }
+            } 
+        }    
+        $option = Read-host "
+        Job is running and saving directories to a csv file ( .\Exports\SMB_share-dir_enum_$Date.csv )
+        Do not close C.A.R.P.E. while this is running.
+        The Job may take awhile depending on what you are trying to enumerate
+        [1] Go back to SMB_Prowler Menu
+        [2] Check Jobs
+        " 
+        switch ($option) {
+            1 { SMB_Prowler_Menu }
+            2 { Get_SMB_Jobs }
+        }
     }
+    #OPTION 4, Gathering Directory Permissions
     
 }
-
-
 
 

@@ -23,11 +23,11 @@ function Welcome_Menu {
     Updates:                                                                                                                                     
     $Available_Updates                                                                                                                           
                                                                                                                                                  
-                            [1] Select '1' to view documentation                                                                                 
-                            [2] Select '2' if you want to Run Enumeration/Discovery                                                                        
-                            [3] Select '3' If you want to take a look at the Random Tools                                                        
-                            [U] Select 'U' If you would like to view dependecy versions                                                          
-                            [Q] Select 'Q' If you would like to Quite                                                                          
+                            [1] To view documentation                                                                                 
+                            [2] To Run Enumeration/Discovery                                                                        
+                            [3] To to take a look at the Random Tools                                                        
+                            [U] To view dependecy versions/Updates                                                          
+                            [Q] To Quite                                                                         
                                                                                                                                                 
 
     "
@@ -243,27 +243,31 @@ Function SMB_Prowler_Menu {
           With the use of Nmap and powershell
           
           Broken into Phases this tool can be used to do the following
-            Phase 1: Discovery
+            [1] Phase 1: Discovery
                   First this Phase uses Nmap to discover hosts with smb port 445 open
                   Then it uses net view on each of those hosts to see possible shares it can find
 
-            Phase 2: Enumeration
+            [2] Phase 2: Enumeration
                   With The data collected during Phase 1,
                   We can start Enumerating (Directories, Files and the contents of Files)
                     You can search for strings within files, or you can open them
 
-            Phase 3: Exfiltration
+            [3] Phase 3: Exfiltration
                   Once you have ran through Discovery and Enumeration, you can find that juicy data and exfiltrate it
+
+            [4] To check Current Jobs
 
                                                                                          
                                                       
   "
-  $option = read-host "Please Select the Phase you would like to run (1/2/3)"
+  $option = read-host "select the phase or additional option you would like to run"
 
   switch ($option) {
     1 { SMB_Phase_1 }
-    2 {}
+    2 { SMB_Phase_2 }
     3 {}
+    4 { Get_SMB_Jobs }
+
   }
 }
 

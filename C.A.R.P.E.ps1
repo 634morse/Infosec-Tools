@@ -1,10 +1,10 @@
-try {
-    Set-ExecutionPolicy "Allsigned" -scopt localmachine
-}
+# try {
+#     Set-ExecutionPolicy "Allsigned" -scopt localmachine
+# }
 
-catch {
-    #Do nothing
-}
+# catch {
+#     #Do nothing
+# }
 
 $Host.UI.RawUI.WindowTitle = " C.A.R.P.E."
 $Host.UI.RawUI.BackgroundColor = "Black"
@@ -28,12 +28,14 @@ $env:path += ';.\Dependencies\Nmap'
 #Clean Temp folder
 Remove-item -Path .\temp\* -recurse -force
 
-#Importing Functions
+#Importing C.A.R.P.E. Functions
 $I = ls .\Modules| select name
 Foreach ($F in $I) {
     $FName = $F.name
     Import-Module .\Modules\$FName
-} 
+}
+#Importing 3rd party Modules/Tools
+Import-Module .\Dependencies\ThreadJob\2.0.0\Microsoft.PowerShell.ThreadJob.dll
 
 Nmap_update_check
 7zip_update_check 

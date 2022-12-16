@@ -35,4 +35,42 @@ Foreach ($File in $Files) {
     Write-Progress -Activity "Crawling Files - " -Status "Crawled: $i of $File_Count"
     
 }
+
+
+
+
+
+
+start-job -name Enum_Dir_$SMB_share -ScriptBlock {
+    try {  
+    $Directories = get-childitem -path \\172.28.1.100\Apps -Directory -Recurse -Depth 1 | select FullName
+    }
+    catch [System.Exception] {
+        "Caught a system exception, Most Likely Permissions Issue"
+    }
+    foreach ($Dir in $Directories) {
+        $Dir_FN = $Dir.FullName
+        $Table2 = New-Object PSObject -Property @{
+            Share = $share_name
+            Full_Path = $Dir_FN
+        }
+        $Table2 | select Share, Full_Path | export-csv .\Exports\SMB_share_dir_enum_$Date.csv -Append -NoTypeInformation
+    }
+}
+
+
+
+
+
+
+
+Foreach ($_ in $Shares) {
+    $SMB_Host = $_.Host
+    $SMB_share = $_.Share
+    $Directories = Get-ChildItem \\Avo\$SMB_share -Directory | select name
+    Foreach ($Directory in $Directories) {
+        (get-acl).access
+    }
+}
+
 }
