@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///C:/Users/copatterson/Documents/VSCode-Projects/Infosec-Tools/Dependencies/Nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.93 scan initiated Sun Dec 18 19:28:23 2022 as: C:\\Users\\copatterson\\Documents\\VSCode-Projects\\Infosec-Tools\\Dependencies\\Nmap\\nmap.exe -p 21,23 -oX .\\temp\\portscan-12-18-2022.xml 172.26.50.1/24 -->
+<nmaprun scanner="nmap" args="C:\\Users\\copatterson\\Documents\\VSCode-Projects\\Infosec-Tools\\Dependencies\\Nmap\\nmap.exe -p 21,23 -oX .\\temp\\portscan-12-18-2022.xml 172.26.50.1/24" start="1671409703" startstr="Sun Dec 18 19:28:23 2022" version="7.93" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="2" services="21,23"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.26.50.1" addrtype="ipv4"/>
+<address addr="B4:FB:E4:1E:46:01" addrtype="mac" vendor="Ubiquiti Networks"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.26.50.57" addrtype="ipv4"/>
+<address addr="0C:62:A6:AA:8D:04" addrtype="mac" vendor="Hui Zhou Gaoshengda Technology"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.26.50.72" addrtype="ipv4"/>
+<address addr="78:66:9D:40:0D:B8" addrtype="mac" vendor="Hui Zhou Gaoshengda Technology"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.26.50.65" addrtype="ipv4"/>
+<address addr="4C:3B:DF:95:65:A8" addrtype="mac" vendor="Microsoft"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.26.50.77" addrtype="ipv4"/>
+<address addr="B6:1E:86:FD:99:4C" addrtype="mac"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.26.50.74" addrtype="ipv4"/>
+<address addr="58:82:A8:A9:09:5B" addrtype="mac" vendor="Microsoft"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<host starttime="1671409725" endtime="1671409725"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.26.50.1" addrtype="ipv4"/>
+<address addr="B4:FB:E4:1E:46:01" addrtype="mac" vendor="Ubiquiti Networks"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="21"><state state="closed" reason="reset" reason_ttl="64"/><service name="ftp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="23"><state state="closed" reason="reset" reason_ttl="64"/><service name="telnet" method="table" conf="3"/></port>
+</ports>
+<times srtt="1984" rttvar="2577" to="100000"/>
+</host>
+<host starttime="1671409725" endtime="1671409725"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.26.50.57" addrtype="ipv4"/>
+<address addr="0C:62:A6:AA:8D:04" addrtype="mac" vendor="Hui Zhou Gaoshengda Technology"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="21"><state state="closed" reason="reset" reason_ttl="64"/><service name="ftp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="23"><state state="closed" reason="reset" reason_ttl="64"/><service name="telnet" method="table" conf="3"/></port>
+</ports>
+<times srtt="9468" rttvar="8875" to="100000"/>
+</host>
+<host starttime="1671409725" endtime="1671409728"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.26.50.65" addrtype="ipv4"/>
+<address addr="4C:3B:DF:95:65:A8" addrtype="mac" vendor="Microsoft"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="21"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="ftp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="23"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="telnet" method="table" conf="3"/></port>
+</ports>
+<times srtt="231000" rttvar="231000" to="1155000"/>
+</host>
+<host starttime="1671409725" endtime="1671409725"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.26.50.72" addrtype="ipv4"/>
+<address addr="78:66:9D:40:0D:B8" addrtype="mac" vendor="Hui Zhou Gaoshengda Technology"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="21"><state state="closed" reason="reset" reason_ttl="64"/><service name="ftp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="23"><state state="closed" reason="reset" reason_ttl="64"/><service name="telnet" method="table" conf="3"/></port>
+</ports>
+<times srtt="6531" rttvar="4750" to="100000"/>
+</host>
+<host starttime="1671409725" endtime="1671409727"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.26.50.74" addrtype="ipv4"/>
+<address addr="58:82:A8:A9:09:5B" addrtype="mac" vendor="Microsoft"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="21"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="ftp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="23"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="telnet" method="table" conf="3"/></port>
+</ports>
+<times srtt="242843" rttvar="143257" to="815871"/>
+</host>
+<host starttime="1671409725" endtime="1671409725"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="172.26.50.77" addrtype="ipv4"/>
+<address addr="B6:1E:86:FD:99:4C" addrtype="mac"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="21"><state state="closed" reason="reset" reason_ttl="64"/><service name="ftp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="23"><state state="closed" reason="reset" reason_ttl="64"/><service name="telnet" method="table" conf="3"/></port>
+</ports>
+<times srtt="254031" rttvar="175312" to="955279"/>
+</host>
+<host starttime="1671409728" endtime="1671409728"><status state="up" reason="localhost-response" reason_ttl="0"/>
+<address addr="172.26.50.88" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="21"><state state="closed" reason="reset" reason_ttl="128"/><service name="ftp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="23"><state state="closed" reason="reset" reason_ttl="128"/><service name="telnet" method="table" conf="3"/></port>
+</ports>
+<times srtt="1000" rttvar="3750" to="100000"/>
+</host>
+<runstats><finished time="1671409728" timestr="Sun Dec 18 19:28:48 2022" summary="Nmap done at Sun Dec 18 19:28:48 2022; 256 IP addresses (7 hosts up) scanned in 25.41 seconds" elapsed="25.41" exit="success"/><hosts up="7" down="249" total="256"/>
+</runstats>
+</nmaprun>
