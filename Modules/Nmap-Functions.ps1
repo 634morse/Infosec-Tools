@@ -28,7 +28,7 @@ function nmap_scan {
     If ( $Export -eq "Y") {
         $ExportPath = Read-Host "   Enter Desired location to store the csv file"
     }
-    If ($NOption -eq "portscan") {
+    If ($NOption -eq "portscan" -or $NOption -eq "stealthscan") {
         $Ports = Read-host "List ports to scan:
         Single port (1)
         Comma Delimited (1,2,3)
@@ -58,6 +58,16 @@ function nmap_scan {
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
                 $ParseScan | select IPv4, Status, Ports, HostName | export-csv $ExportPath -Append -NoTypeInformation
             }
+            If ($NOption -eq "stealthscan") {
+                If ($Ports -eq "All") {
+                    $scan = nmap $Range -sS -oX .\temp\portscan-$date.xml
+                }
+                else {
+                    $Scan = nmap $Range -p $Ports -sS -oX .\temp\portscan-$date.xml
+                }
+                $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
+                $ParseScan | select IPv4, Status, Ports, HostName | export-csv $ExportPath -Append -NoTypeInformation
+            }
         }
         write-output "done scanning, csv file stored here: $ExportPath"
     }
@@ -79,6 +89,15 @@ function nmap_scan {
                 }
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
             }
+            If ($NOption -eq "stealthscan") {
+                If ($Ports -eq "All") {
+                    $scan = nmap $Range -sS -oX .\temp\stealthscan-$date.xml
+                }
+                else {
+                    $Scan = nmap $Range -sS -p $Ports -oX .\temp\portscan-$date.xml
+                }
+                $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
+            }
             $ParseScan
         }
     }
@@ -94,10 +113,19 @@ function nmap_scan {
                 $scan = nmap $Ranges -oX .\temp\portscan-$date.xml
             }
             else {
-                $Scan = nmap $Ranges -p $Ports -oX .\temp\portscan-$date.xml
-                
+                $Scan = nmap $Ranges -p $Ports -oX .\temp\portscan-$date.xml   
             }
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
+            $ParseScan | select IPv4, Status, HostName | export-csv $ExportPath -Append -NoTypeInformation
+        }
+        If ($NOption -eq "stealthscan") {
+            If ($Ports -eq "All") {
+                $scan = nmap $Ranges -sS -oX .\temp\stealthscan-$date.xml
+            }
+            else {
+                $Scan = nmap $Ranges -p $Ports -sS -oX .\temp\stealthscan-$date.xml   
+            }
+            $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
             $ParseScan | select IPv4, Status, Ports, HostName | export-csv $ExportPath -Append -NoTypeInformation
         }
         write-output = "done scanning, csv file stored here: $ExportPath"
@@ -117,10 +145,19 @@ function nmap_scan {
             }
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
         }
+        If ($NOption -eq "stealthscan") {
+            If ($Ports -eq "All") {
+                $scan = nmap $Ranges -sS -oX .\temp\stealthscan-$date.xml
+            }
+            else {
+                $Scan = nmap $Ranges -p $Ports -sS -oX .\temp\stealthscan-$date.xml
+            }
+            $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
+        }
         $ParseScan
     }
     $Option = read-host "
-    To run another scan, select [1]
+    To run another $NOption, select [1]
     To return to the Nmap Menu, Select [2]"
  
      switch ($Option) {
