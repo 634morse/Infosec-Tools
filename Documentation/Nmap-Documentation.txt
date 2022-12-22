@@ -1,0 +1,50 @@
+Nmap Documentation
+
+NOTE: WHEN Scanning, if every IP in a range is coming back "up" when you know those are not valid hosts,
+      The firewall may be sending back packets to throw the scan off. I have noticed this happens when running scans over the vpn
+
+Running Nmap through this Program provides a few benefits
+    * It allows the option to export the data to a csv (Nmap can only do XML, along with a few others)
+        I personally along with others find it easier to work with csv files when parsing out the data/give it to others
+
+    * No need to remember syntax
+        While it is good to understand how the tool works and how the different methods of scanning work, it is nice to just select a few options without always remembering syntax.
+        This also allows others to perform scans without having to go learn all the syntax
+
+4 main options for each scan method
+    * Import CSV for batch scan and export to csv
+    * Import CSV for batch scan and display results in shell
+    * Manually give a range to scan and export to csv
+    * Manually give a range to scan and disaply results in shell
+
+How each Scan works
+
+    PING SCAN:
+        Performs Host-discovery without scanning the ports
+        Per Nmap Documentation https://nmap.org/book/man-host-discovery.html
+
+        The default host discovery done with -sn consists of an ICMP echo request, TCP SYN to port 443, TCP ACK to port 80, and an ICMP timestamp request by default.
+        When executed by an unprivileged user, only SYN packets are sent (using a connect call) to ports 80 and 443 on the target.
+
+    PORT SCAN:
+        Scans Ports (either all or ones specified) and gives a status on whether they are open/closed/filtered/etc
+        By Default Nmap will try to use TCP SYN Scans as it is quick, and stealthy as it never completes the full TCP Connection
+        If TCP SYN Cannot be used, it will perform a TCP Connection Scan (completes the full TCP Handshake)
+
+        Per Nmap Documentation 
+            https://nmap.org/book/man-port-scanning-basics.html
+            https://nmap.org/book/man-port-scanning-techniques.html
+
+    STEALTH SCAN:
+        This scan is the same as a port scan, but it uses the switch "-sS" to force Syn packets so that the TCP handshake is never fully completed
+
+        Per Nmap Documentation
+            https://nmap.org/book/synscan.html
+
+    SMB SCAN:
+        This scan checks to see if the smb port 445 is open and whether or not smb signing is enabled/disabled and/or required/not-required
+
+        Per Nmap Documentation
+            https://nmap.org/nsedoc/scripts/smb-security-mode.html
+
+

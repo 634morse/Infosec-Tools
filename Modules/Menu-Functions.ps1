@@ -212,7 +212,10 @@ function Nmap_network_discovery_menu {
   
                                        [PingScan]     To run a Ping Scan
                                        [PortScan]     To run a Port Scan
-                                       [Stealthscan]  To run a Stealth Scan
+                                       [StealthScan]  To run a Stealthy port Scan
+                                       [SMBScan]      To run a SMB Security Mode Scan
+
+                                       [Documentation] To read Documentation
                                                                                 
 "
 $global:NOption = read-host "Please Type in the name of the scan you would like to run"
@@ -221,6 +224,8 @@ switch ($NOption) {
   PingScan { nmap_scan }
   PortScan { nmap_scan }
   stealthscan { nmap_scan }
+  SMBScan { nmap_scan }
+  Documentation { nmap_documentation }
 }
 }
 

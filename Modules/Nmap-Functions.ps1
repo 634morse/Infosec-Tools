@@ -1,15 +1,19 @@
+function nmap_documentation {
+    get-content .\Documentation\Nmap-Documentation.txt
+    $option = Read-host  "Press any button to return to Nmap Menu"
+    Nmap_network_discovery_menu
+}
 function nmap_scan {
     Do {
     $option1 = Read-host "
-    [1] To import hosts/subnets from csv (column-name needs to be 'range')
+    [1] To import hosts/subnets from a text file (each range needs to be on a new line)
     [2] To manually choose hosts/subnets to scan
     "
     } until ($option1 -eq "1" -or $option1 -eq "2")    
     If ($option1 -eq "1") {
         do {
-        $Ranges = Read-host "Please enter the full path of the csv file"
+        $Ranges = Read-host "Please enter the full path of the text file"
         $Test_path = Test-Path $Ranges
-        $Ranges = Import-csv $Ranges
         } Until ($Test_path)
 
     }
@@ -40,67 +44,85 @@ function nmap_scan {
     ###Scanning###
     If ($option1 -eq "1" -and $Export -eq "y") {
         write-output "Scanning Now"
-        foreach ($Range in $Ranges) {
-            $Range = $Range.range
-            Write-Host $Range
             If ($NOption -eq "pingscan") {
-                $scan = nmap $Range -sn -oX .\temp\pingscan-$date.xml
+                $scan = nmap -iL $Ranges -sn -oX .\temp\pingscan-$date.xml
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
                 $ParseScan | select IPv4, Status, HostName | export-csv $ExportPath -Append -NoTypeInformation
             }
             If ($NOption -eq "portscan") {
                 If ($Ports -eq "All") {
-                    $scan = nmap $Range -oX .\temp\portscan-$date.xml
+                    $scan = nmap -iL $Ranges -oX .\temp\portscan-$date.xml
                 }
                 else {
-                    $Scan = nmap $Range -p $Ports -oX .\temp\portscan-$date.xml
+                    $Scan = nmap -iL $Ranges -p $Ports -oX .\temp\portscan-$date.xml
                 }
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
                 $ParseScan | select IPv4, Status, Ports, HostName | export-csv $ExportPath -Append -NoTypeInformation
             }
             If ($NOption -eq "stealthscan") {
                 If ($Ports -eq "All") {
-                    $scan = nmap $Range -sS -oX .\temp\portscan-$date.xml
+                    $scan = nmap -iL $Ranges -sS -oX .\temp\portscan-$date.xml
                 }
                 else {
-                    $Scan = nmap $Range -p $Ports -sS -oX .\temp\portscan-$date.xml
+                    $Scan = nmap -iL $Ranges -p $Ports -sS -oX .\temp\portscan-$date.xml
                 }
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
                 $ParseScan | select IPv4, Status, Ports, HostName | export-csv $ExportPath -Append -NoTypeInformation
             }
-        }
+            If ($NOption -eq "smbscan") {
+                $scan = nmap -p 445 --script smb2-security-mode.nse -iL $Ranges -oX .\temp\smbscan-$date.xml
+                $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\smbscan-$date.xml
+                foreach ($_ in $ParseScan) {
+                    $IPv4 = $_.IPv4
+                    $Ports = $_.ports
+                    $SMB_Signing = $_.Script
+                    $shorten = $SMB_Signing -replace '\s*'
+                    $i = $shorten.split(':')
+                        $i = $i.split('><')
+                        $i = $i.split(':')
+                        $SMB_Version = $i[2]
+                        $SMB_Status = $i[3]
+                    $Table = New-Object PSObject -Property @{
+                        IPv4 = $IPv4
+                        SMB_Version = $SMB_Version
+                        SMB_Status = $SMB_Status
+                        Port_status = $Ports
+                    }
+                    $Table | select IPv4, SMB_Version, SMB_Status, Port_status | export-csv $ExportPath -append -notypeinformation
+                }
+            }
         write-output "done scanning, csv file stored here: $ExportPath"
     }
     elseif ($option1 -eq "1" -and $Export -eq "n") {
         write-output "Scanning Now"
-        foreach ($Range in $Ranges) {
-            $Range = $Range.range
-            Write-Host $Range
             If ($NOption -eq "pingscan") {
-                $scan = nmap $Range -sn -oX .\temp\pingscan-$date.xml
+                $scan = nmap -iL $Ranges -sn -oX .\temp\pingscan-$date.xml
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
             }
             If ($NOption -eq "portscan") {
                 If ($Ports -eq "All") {
-                    $scan = nmap $Range -oX .\temp\portscan-$date.xml
+                    $scan = nmap $-iL $Ranges -oX .\temp\portscan-$date.xml
                 }
                 else {
-                    $Scan = nmap $Range -p $Ports -oX .\temp\portscan-$date.xml
+                    $Scan = nmap -iL $Ranges -p $Ports -oX .\temp\portscan-$date.xml
                 }
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
             }
             If ($NOption -eq "stealthscan") {
                 If ($Ports -eq "All") {
-                    $scan = nmap $Range -sS -oX .\temp\stealthscan-$date.xml
+                    $scan = nmap -iL $Ranges -sS -oX .\temp\stealthscan-$date.xml
                 }
                 else {
-                    $Scan = nmap $Range -sS -p $Ports -oX .\temp\portscan-$date.xml
+                    $Scan = nmap -iL $Ranges -sS -p $Ports -oX .\temp\portscan-$date.xml
                 }
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
             }
+            If ($NOption -eq "smbscan") {
+                $scan = nmap -p 445 --script smb2-security-mode.nse -iL $Ranges -oX .\temp\smbscan-$date.xml
+                $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\smbscan-$date.xml
+            }
             $ParseScan
         }
-    }
     elseif ($option1 -eq "2" -and $Export -eq "y") {
         write-output "Scanning Now"
         If ($NOption -eq "pingscan") {
@@ -128,6 +150,28 @@ function nmap_scan {
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
             $ParseScan | select IPv4, Status, Ports, HostName | export-csv $ExportPath -Append -NoTypeInformation
         }
+        If ($NOption -eq "smbscan") {
+            $scan = nmap -p 445 --script smb2-security-mode.nse $Ranges -oX .\temp\smbscan-$date.xml
+            $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\smbscan-$date.xml
+            foreach ($_ in $ParseScan) {
+                $IPv4 = $_.IPv4
+                $Ports = $_.ports
+                $SMB_Signing = $_.Script
+                $shorten = $SMB_Signing -replace '\s*'
+                $i = $shorten.split(':')
+                    $i = $i.split('><')
+                    $i = $i.split(':')
+                    $SMB_Version = $i[2]
+                    $SMB_Status = $i[3]
+                $Table = New-Object PSObject -Property @{
+                    IPv4 = $IPv4
+                    SMB_Version = $SMB_Version
+                    SMB_Status = $SMB_Status
+                    Port_status = $Ports
+                }
+                $Table | select IPv4, SMB_Version, SMB_Status, Port_status | export-csv $ExportPath -append -notypeinformation
+            }
+        }
         write-output = "done scanning, csv file stored here: $ExportPath"
     }
     elseif ($option1 -eq "2" -and $Export -eq "n") {
@@ -154,6 +198,10 @@ function nmap_scan {
             }
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
         }
+        If ($NOption -eq "smbscan") {
+            $scan = nmap -p 445 --script smb2-security-mode.nse $Range -oX .\temp\smbscan-$date.xml
+            $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\smbscan-$date.xml
+        }
         $ParseScan
     }
     $Option = read-host "
@@ -165,3 +213,4 @@ function nmap_scan {
          2 { Nmap_network_discovery_menu }
      }
 }
+
