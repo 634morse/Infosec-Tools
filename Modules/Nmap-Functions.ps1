@@ -199,7 +199,7 @@ function nmap_scan {
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
         }
         If ($NOption -eq "smbscan") {
-            $scan = nmap -p 445 --script smb2-security-mode.nse $Range -oX .\temp\smbscan-$date.xml
+            $scan = nmap -p 445 --script smb2-security-mode.nse $Ranges -oX .\temp\smbscan-$date.xml
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\smbscan-$date.xml
         }
         $ParseScan
