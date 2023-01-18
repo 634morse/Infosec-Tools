@@ -2,7 +2,7 @@
   <img width="300" height="230" src="/Dependencies/Icon/Piranha-Fish-PNG-Picture.png">
 </p>
 
-C.A.R.P.E.
+## C.A.R.P.E. <br /> ##
 "Corey's Attack, Red-Team, Pentest, Enumeration Tool"
 
 Overall Objective:
@@ -24,6 +24,3 @@ Design:
        5: gets all modules and imports them
        6: runs update check functions
        7: Starts the Welome Menu
-
-
-Local Enumeration:
