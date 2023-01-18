@@ -7,7 +7,7 @@ If ($null -eq $S) {
     $Shortcut.WorkingDirectory = "$pwd"
     $Shortcut.TargetPath = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
     $Shortcut.Arguments = "-ExecutionPolicy bypass $pwd\C.A.R.P.E.ps1"
-    $Shortcut.IconLocation = "$pwd\Dependencies\cyber-logo.ico"
+    $Shortcut.IconLocation = "$pwd\Dependencies\Icon\Piranha-icon.ico"
     $Shortcut.Save()  
 }
 
@@ -32,7 +32,7 @@ $global:date = Get-Date -Format "MM-dd-yyyy"
 $env:path += '.\Dependencies\Nmap'
 
 #Clean Temp folder
-Remove-item -Path .\temp\* -recurse -force
+Remove-item -Path .\temp\*  -recurse -force -ErrorAction SilentlyContinue
 
 #Importing Functions
 $I = ls .\Modules| select name

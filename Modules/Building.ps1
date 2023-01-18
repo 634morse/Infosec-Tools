@@ -38,32 +38,6 @@ Foreach ($File in $Files) {
 
 
 
-
-
-
-start-job -name Enum_Dir_$SMB_share -ScriptBlock {
-    try {  
-    $Directories = get-childitem -path \\172.28.1.100\Apps -Directory -Recurse -Depth 1 | select FullName
-    }
-    catch [System.Exception] {
-        "Caught a system exception, Most Likely Permissions Issue"
-    }
-    foreach ($Dir in $Directories) {
-        $Dir_FN = $Dir.FullName
-        $Table2 = New-Object PSObject -Property @{
-            Share = $share_name
-            Full_Path = $Dir_FN
-        }
-        $Table2 | select Share, Full_Path | export-csv .\Exports\SMB_share_dir_enum_$Date.csv -Append -NoTypeInformation
-    }
-}
-
-
-
-
-
-
-
 Foreach ($_ in $Shares) {
     $SMB_Host = $_.Host
     $SMB_share = $_.Share
@@ -74,3 +48,88 @@ Foreach ($_ in $Shares) {
 }
 
 }
+
+
+
+
+
+    If ($option1 -eq "1" -and $Export -eq "y") {
+        write-output "Scanning Now"
+        foreach ($Range in $Ranges) {
+            $Range = $Range.range
+            Write-Host $Range
+            If ($NOption -eq "pingscan") {
+                $scan = nmap $Range -sn -oX .\temp\pingscan-$date.xml
+                $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
+                $ParseScan | select IPv4, Status, HostName | export-csv $ExportPath -Append -NoTypeInformation
+            }
+            If ($NOption -eq "portscan") {
+                If ($Ports -eq "All") {
+                    $scan = nmap $Range -oX .\temp\portscan-$date.xml
+                }
+                else {
+                    $Scan = nmap $Range -p $Ports -oX .\temp\portscan-$date.xml
+                }
+                $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
+                $ParseScan | select IPv4, Status, Ports, HostName | export-csv $ExportPath -Append -NoTypeInformation
+            }
+        }
+        write-output "done scanning, csv file stored here: $ExportPath"
+    }
+    elseif ($option1 -eq "1" -and $Export -eq "n") {
+        write-output "Scanning Now"
+        foreach ($Range in $Ranges) {
+            $Range = $Range.range
+            Write-Host $Range
+            If ($NOption -eq "pingscan") {
+                $scan = nmap $Range -sn -oX .\temp\pingscan-$date.xml
+                $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
+            }
+            If ($NOption -eq "portscan") {
+                If ($Ports -eq "All") {
+                    $scan = nmap $Range -oX .\temp\portscan-$date.xml
+                }
+                else {
+                    $Scan = nmap $Range -p $Ports -oX .\temp\portscan-$date.xml
+                }
+                $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
+            }
+            $ParseScan
+        }
+    }
+    elseif ($option1 -eq "2" -and $Export -eq "y") {
+        write-output "Scanning Now"
+        If ($NOption -eq "pingscan") {
+            $scan = nmap $Ranges -sn -oX .\temp\pingscan-$date.xml
+            $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
+            $ParseScan | select IPv4, Status, HostName | export-csv $ExportPath -Append -NoTypeInformation
+        }
+        If ($NOption -eq "portscan") {
+            If ($Ports -eq "All") {
+                $scan = nmap $Range -oX .\temp\portscan-$date.xml
+            }
+            else {
+                $Scan = nmap $Range -p $Ports -oX .\temp\portscan-$date.xml
+            }
+            $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
+            $ParseScan | select IPv4, Status, Ports, HostName | export-csv $ExportPath -Append -NoTypeInformation
+        }
+        write-output = "done scanning, csv file stored here: $ExportPath"
+    }
+    elseif ($option1 -eq "2" -and $Export -eq "n") {
+        write-output "Scanning Now"
+        If ($NOption -eq "pingscan") {
+            $scan = nmap $Ranges -sn -oX .\temp\pingscan-$date.xml
+            $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
+        }
+        If ($NOption -eq "portscan") {
+            If ($Ports -eq "All") {
+                $scan = nmap $Range -oX .\temp\portscan-$date.xml
+            }
+            else {
+                $Scan = nmap $Range -p $Ports -oX .\temp\portscan-$date.xml
+            }
+            $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
+        }
+        $ParseScan
+    }
