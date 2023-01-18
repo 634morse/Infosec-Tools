@@ -1,14 +1,20 @@
-# try {
-#     Set-ExecutionPolicy "Allsigned" -scopt localmachine
-# }
-
-# catch {
-#     #Do nothing
-# }
+#Creating Desktop shortcut
+$S = get-childitem $env:USERPROFILE\desktop\C.A.R.P.E.lnk -ErrorAction SilentlyContinue
+If ($null -eq $S) {
+    $WshShell = New-Object -comObject WScript.Shell
+    #$Shortcut = $WshShell.CreateShortcut("$pwd\C.A.R.P.E.lnk")
+    $Shortcut = $WshShell.CreateShortcut("$env:USERPROFILE\Desktop\C.A.R.P.E.lnk")
+    $Shortcut.WorkingDirectory = "$pwd"
+    $Shortcut.TargetPath = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
+    $Shortcut.Arguments = "-ExecutionPolicy bypass $pwd\C.A.R.P.E.ps1"
+    $Shortcut.IconLocation = "$pwd\Dependencies\cyber-logo.ico"
+    $Shortcut.Save()  
+}
 
 $Host.UI.RawUI.WindowTitle = " C.A.R.P.E."
 $Host.UI.RawUI.BackgroundColor = "Black"
 $Host.UI.RawUI.ForegroundColor = "Magenta"
+$Host.UI.RawUI.Window
 
 $pshost = Get-Host
 $psWindow = $pshost.UI.RawUI
@@ -23,23 +29,19 @@ $psWindow.WindowSize= $newSize
 
 $global:ProgressPreference = 'SilentlyContinue'
 $global:date = Get-Date -Format "MM-dd-yyyy"
-$env:path += ';.\Dependencies\Nmap'
+$env:path += '.\Dependencies\Nmap'
 
 #Clean Temp folder
 Remove-item -Path .\temp\* -recurse -force
 
-#Importing C.A.R.P.E. Functions
+#Importing Functions
 $I = ls .\Modules| select name
 Foreach ($F in $I) {
     $FName = $F.name
     Import-Module .\Modules\$FName
-}
-#Importing 3rd party Modules/Tools
-Import-Module .\Dependencies\ThreadJob\2.0.0\Microsoft.PowerShell.ThreadJob.dll
+} 
 
 Nmap_update_check
 7zip_update_check 
-
 Available_Updates
-
 Welcome_Menu
