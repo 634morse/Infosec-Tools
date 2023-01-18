@@ -1,4 +1,6 @@
-
+<p align="center">
+  <img width="200" height="230" src="/Dependencies/Icon/Piranha-Fish-PNG-Picture.png">
+</p>
 
 C.A.R.P.E.
 "Corey's Attack, Red-Team, Pentest, Enumeration Tool"
