@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="200" height="230" src="/Dependencies/Icon/Piranha-Fish-PNG-Picture.png">
+  <img width="300" height="230" src="/Dependencies/Icon/Piranha-Fish-PNG-Picture.png">
 </p>
 
 C.A.R.P.E.
