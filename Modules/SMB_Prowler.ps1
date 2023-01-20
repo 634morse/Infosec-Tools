@@ -1,5 +1,5 @@
 Function Get_SMB_Jobs {
-    Get-Job | Where-Object {$_.Name -match "Enum_Directories"}
+    Get-Job | Where-Object {$_.Name -match "Enum_Directories" -or $_.Name -match "Dir_Shares"}
     $option = Read-host  "Press any button to return to SMB_Prowler Menu"
     SMB_Prowler_Menu
 }
@@ -112,46 +112,86 @@ Function SMB_Phase_2 {
     [3] To search files for words/Phrases/Etc
     [4] To gather Directory Security Permissions
     "
-    } until ($option -match "1" -or $option -match "2" -or $option -match "3")
-    #OPTION 1, Gathering Directories
-    If ($option -eq "1") {
-        $option = Read-Host "
+    } until ($option -match "1" -or $option -match "2" -or $option -match "3" -or $option -match "4")
+    #OPTION 1, Gathering Directories #OPTION 2
+    If ($option -eq "1" -or $option -eq "4") {
+        $option1 = Read-Host "
             [1] To Import csv of shares
             [2] To manually choose starting path
         "
-        If ($option -eq "1") {
+        If ($option1 -eq "1") {
             do {
             $Shares_File = Read-host "      Please supply path of the csv to import"
             $Test_Path = Test-Path $Shares_File
             $Shares = Import-csv $Shares_File
             } until ($Test_Path)
         }
-        elseif ($option -eq "2") {
+        elseif ($option1 -eq "2") {
             $Shares = Read-Host "       Please Supply the full path of the share you want to enumerate"
         }
         do {
-            $option = Read-Host "      
+            $option1 = Read-Host "      
                 How Many Directories do you want to dig into?
                 Select a number, EX: 0,1,5,10,etc (0 will get the base folders within a directory)
                 Or Type 'MD' For Max depth
         
         "
-        } until ( $option -eq "MD" -or $option -match "^\d+$" )
+        } until ( $option1 -eq "MD" -or $option1 -match "^\d+$" )
+
         $Current_Path = $pwd.path
-        Start-ThreadJob -name Enum_Directories -ScriptBlock {
-            Foreach ($_ in $using:Shares) {
-                $SMB_Host = $_.Host
-                $SMB_share = $_.Share
-                If ( $using:option -eq "MD" ) {
-                    get-childitem -path \\$SMB_Host\$SMB_share -Directory -Recurse -ErrorAction SilentlyContinue | select FullName | export-csv $using:Current_Path\Exports\SMB_share-dir_enum_$using:Date.csv -Append -NoTypeInformation
-                }
-                elseif ( $using:option -match "^\d+$" ) {
-                    get-childitem -path \\$SMB_Host\$SMB_share -Directory -Recurse -Depth $using:option -ErrorAction SilentlyContinue | select FullName | export-csv $using:Current_Path\Exports\SMB_share-dir_enum_$using:Date.csv -Append -NoTypeInformation
-                }
+
+        If ($option -eq 1) {
+            Start-ThreadJob -name Enum_Directories -ScriptBlock {
+                Foreach ($_ in $using:Shares) {
+                    $SMB_Host = $_.Host
+                    $SMB_share = $_.Share
+                    $Export = "SMB_share-dir_enum_"
+                    If ( $using:option1 -eq "MD" ) {
+                        get-childitem -path \\$SMB_Host\$SMB_share -Directory -Recurse -ErrorAction SilentlyContinue | select FullName | export-csv $using:Current_Path\Exports\$Export$using:Date.csv -Append -NoTypeInformation
+                    }
+                    elseif ( $using:option1 -match "^\d+$" ) {
+                        get-childitem -path \\$SMB_Host\$SMB_share -Directory -Recurse -Depth $using:option1 -ErrorAction SilentlyContinue | select FullName | export-csv $using:Current_Path\Exports\SMB_share-dir_enum_$using:Date.csv -Append -NoTypeInformation
+                    }
+                } 
             } 
-        }    
+        }
+        If ($option -eq 4) {
+            Start-ThreadJob -name Dir_Shares -ScriptBlock {
+                Foreach ($_ in $using:Shares) {
+                    $P = $_
+                    $Export = "SMB_shares_permissions_"
+                    If ( $using:option1 -eq "MD" ) {
+                        $Directories = get-childitem -path $P -Directory -ErrorAction SilentlyContinue | select FullName
+                    }
+                    elseif ( $using:option1 -match "^\d+$" ) {
+                        $Directories = get-childitem -path $P -Directory -Recurse -Depth $using:option1 -ErrorAction SilentlyContinue | select FullName
+                    }
+                    foreach ($Directory in $Directories) {
+                        $DirectoryFullName = $Directory.fullname
+                        $access = (get-acl $DirectoryFullName).access | select IdentityReference,FileSystemRights,AccessControlType,IsInherited,InheritanceFlags 
+                        foreach ($A in $access) {
+                            $accessIdentityReference = $A.IdentityReference
+                            $accessFileSystemRights = $A.FileSystemRights
+                            $accessAccessControlType = $A.AccessControlType
+                            $accessIsInherited = $A.IsInherited
+                            $accessInheritanceFlags = $A.InheritanceFlags
+                            $Table = New-Object PSObject -Property @{
+                                path = $DirectoryFullName
+                                IdentityReference = $accessIdentityReference
+                                FileSystemRights = $accessFileSystemRights
+                                AccessControlType = $accessAccessControlType
+                                IsInherited = $accessIsInherited
+                                InheritanceFlags = $accessInheritanceFlags
+                            }
+                        $Table | select Path, IdentityReference, FileSystemRights, AccessControlType, IsInherited, InheritanceFlags | export-csv $using:Current_Path\Exports\$Export$using:Date.csv -Append -NoTypeInformation
+                        }
+                    }   
+                }
+            }
+        }
+
         $option = Read-host "
-        Job is running and saving directories to a csv file ( .\Exports\SMB_share-dir_enum_$Date.csv )
+        Job is running and saving directories to a csv file ( $Export$Date.csv )
         Do not close C.A.R.P.E. while this is running.
         The Job may take awhile depending on what you are trying to enumerate
         [1] Go back to SMB_Prowler Menu
@@ -162,8 +202,5 @@ Function SMB_Phase_2 {
             2 { Get_SMB_Jobs }
         }
     }
-    #OPTION 4, Gathering Directory Permissions
-    
 }
-
 
