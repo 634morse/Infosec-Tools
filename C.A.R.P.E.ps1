@@ -41,6 +41,8 @@ Foreach ($F in $I) {
     Import-Module .\Modules\$FName
 } 
 
+Import-Module .\Dependencies\ThreadJob\2.0.0\Microsoft.PowerShell.ThreadJob.dll
+
 Nmap_update_check
 7zip_update_check 
 Available_Updates
