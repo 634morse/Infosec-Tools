@@ -16,12 +16,6 @@ Enumeration:
         Gather a list of Computer objects
         Enumerate Group policy
 
-    Nmap Enumeration:
-        Run port scans against single or a list of hosts/ip ranges
-            Be able to choost between Ping/Stealthy/Normal/Aggressive scans
-            Be able to test FTP Anon, smb signing, etc
-
-
 
 Red-team/attack tools:
     Create a reverse shell function: (Powercat)
@@ -33,3 +27,5 @@ Security Features:
 
 Other:
     Create a comprehensive, clear and concise Readme file
+    Create Global various to keep code Clean
+    Make initial script run tasks in thread jobs to improve load time

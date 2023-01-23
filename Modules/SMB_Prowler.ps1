@@ -1,8 +1,8 @@
-Function Get_SMB_Jobs {
-    Get-Job | Where-Object {$_.Name -match "Enum_Directories" -or $_.Name -match "Dir_Shares"}
-    $option = Read-host  "Press any button to return to SMB_Prowler Menu"
-    SMB_Prowler_Menu
-}
+# Function Get_SMB_Jobs {
+#     Get-Job | Where-Object {$_.Name -match "Enum_Directories" -or $_.Name -match "Dir_Shares"}
+#     $option = Read-host  "Press any button to return to SMB_Prowler Menu"
+#     SMB_Prowler_Menu
+# }
 
 #Phase 1: Discovery/Reconnaissance
 Function SMB_Phase_1 {
@@ -141,6 +141,7 @@ Function SMB_Phase_2 {
         $Current_Path = $pwd.path
 
         If ($option -eq 1) {
+            $global:Enum_Directories_Job = "1"
             Start-ThreadJob -name Enum_Directories -ScriptBlock {
                 Foreach ($_ in $using:Shares) {
                     $SMB_Host = $_.Host
@@ -156,6 +157,7 @@ Function SMB_Phase_2 {
             } 
         }
         If ($option -eq 4) {
+            $global:Dire_Shares_Job = "1"
             Start-ThreadJob -name Dir_Shares -ScriptBlock {
                 Foreach ($_ in $using:Shares) {
                     $P = $_

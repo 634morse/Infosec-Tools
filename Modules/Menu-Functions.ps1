@@ -193,11 +193,20 @@ function AD_Enumeration_Menu {
   #####################################################################################
   #####################################################################################
 
-                        [1] To Gather User Info Select 1
-                        [2] To Gather Group Membership select 2
-                        [3] To Enumerate Group Policy select 3
+                        [1] Enumerate User Info (IN DEVELOPMENT)
+                        [2] Enumerate Group Membership (IN DEVELOPMENT)
+                        [3] Enumerate Group Policy Objects (IN DEVELOPMENT)
+                        [4] Enumerate AD OU Permissions
                                                                          
 "
+Do {
+  $option = Read-Host "Select what job you would like to run"
+} until ($option -eq "1" -or $option -eq "2" -or $option -eq "3" -or $option -eq "4")
+switch ($option) {
+  4 { Enum_AD_OU_Rights }
+
+}
+
 }
 
 function Nmap_network_discovery_menu {
