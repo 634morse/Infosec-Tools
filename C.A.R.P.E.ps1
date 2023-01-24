@@ -29,7 +29,7 @@ $psWindow.WindowSize= $newSize
 
 $global:ProgressPreference = 'SilentlyContinue'
 $global:date = Get-Date -Format "MM-dd-yyyy"
-$env:path += '.\Dependencies\Nmap'
+$env:path += ';.\Dependencies\Nmap'
 
 #Clean Temp folder
 Remove-item -Path .\temp\*  -recurse -force -ErrorAction SilentlyContinue

@@ -32,7 +32,7 @@ function nmap_scan {
     If ( $Export -eq "Y") {
         $ExportPath = Read-Host "   Enter Desired location to store the csv file"
     }
-    If ($NOption -eq "portscan" -or $NOption -eq "stealthscan") {
+    If ($NOption -eq "portscan" -or $NOption -eq "stealthscan" -or $NOption -eq "cipherscan") {
         $Ports = Read-host "List ports to scan:
         Single port (1)
         Comma Delimited (1,2,3)
@@ -91,6 +91,28 @@ function nmap_scan {
                     $Table | select IPv4, SMB_Version, SMB_Status, Port_status | export-csv $ExportPath -append -notypeinformation
                 }
             }
+            If ($NOption -eq "CipherScan") {
+                If ($Ports -eq "All") {
+                    $scan = nmap -iL $Ranges --script ssl-enum-ciphers.nse -oX .\temp\cipherscan-$date.xml
+                }
+                else {
+                    $Scan = nmap -iL $Ranges -p $Ports --script ssl-enum-ciphers.nse -oX .\temp\cipherscan-$date.xml
+                }
+                $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\cipherscan-$date.xml
+                foreach ($_ in $ParseScan) {
+                    $IPv4 = $_.IPv4
+                    $Ports = $_.ports
+                    $Ciphers = $_.Script
+                    If ($Ciphers -ne "<no-script>") {
+                        $Table = New-Object PSObject -Property @{
+                        IPv4 = $IPv4
+                        Port_status = $Ports
+                        Ciphers = $Ciphers
+                        }
+                    $Table | select IPv4, Ciphers | export-csv $ExportPath -append -notypeinformation
+                    }
+                }
+            }
         write-output "done scanning, csv file stored here: $ExportPath"
     }
     elseif ($option1 -eq "1" -and $Export -eq "n") {
@@ -120,6 +142,15 @@ function nmap_scan {
             If ($NOption -eq "smbscan") {
                 $scan = nmap -p 445 --script smb2-security-mode.nse -iL $Ranges -oX .\temp\smbscan-$date.xml
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\smbscan-$date.xml
+            }
+            If ($NOption -eq "CipherScan") {
+                If ($Ports -eq "All") {
+                    $scan = nmap -iL $Ranges --script ssl-enum-ciphers.nse -oX .\temp\cipherscan-$date.xml
+                }
+                else {
+                    $Scan = nmap -iL $Ranges -p $Ports --script ssl-enum-ciphers.nse -oX .\temp\cipherscan-$date.xml
+                }
+                $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\cipherscan-$date.xml
             }
             $ParseScan
         }
@@ -172,6 +203,28 @@ function nmap_scan {
                 $Table | select IPv4, SMB_Version, SMB_Status, Port_status | export-csv $ExportPath -append -notypeinformation
             }
         }
+        If ($NOption -eq "CipherScan") {
+            If ($Ports -eq "All") {
+                $scan = nmap $Ranges --script ssl-enum-ciphers.nse -oX .\temp\cipherscan-$date.xml
+            }
+            else {
+                $Scan = nmap $Ranges -p $Ports --script ssl-enum-ciphers.nse -oX .\temp\cipherscan-$date.xml
+            }
+            $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\cipherscan-$date.xml
+            foreach ($_ in $ParseScan) {
+                $IPv4 = $_.IPv4
+                $Ports = $_.ports
+                $Ciphers = $_.Script
+                If ($Ciphers -ne "<no-script>") {
+                     $Table = New-Object PSObject -Property @{
+                        IPv4 = $IPv4
+                        Port_status = $Ports
+                        Ciphers = $Ciphers
+                    }
+                    $Table | select IPv4, Ciphers | export-csv $ExportPath -append -notypeinformation
+                }
+            }
+        }    
         write-output = "done scanning, csv file stored here: $ExportPath"
     }
     elseif ($option1 -eq "2" -and $Export -eq "n") {
@@ -201,6 +254,15 @@ function nmap_scan {
         If ($NOption -eq "smbscan") {
             $scan = nmap -p 445 --script smb2-security-mode.nse $Ranges -oX .\temp\smbscan-$date.xml
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\smbscan-$date.xml
+        }
+        If ($NOption -eq "CipherScan") {
+            If ($Ports -eq "All") {
+                $scan = nmap $Ranges --script ssl-enum-ciphers.nse -oX .\temp\cipherscan-$date.xml
+            }
+            else {
+                $Scan = nmap $Ranges -p $Ports --script ssl-enum-ciphers.nse -oX .\temp\cipherscan-$date.xml
+            }
+            $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\cipherscan-$date.xml
         }
         $ParseScan
     }

@@ -99,10 +99,10 @@ function Enumeration_Menu_1 {
                                 Welcome to the Discovery/Enumeration Menu! 
   
                       [1] If you want to gather local information on Host(s,) Please Select 1
-                      [2] If you would like to gather Active Directory Info, Please Select 2
-                      [3] If you would like to run Nmap Scans, Please Select 3
-                      [4] If you would like to run SMB Prowler
-                      [B] If you would like to return to the Main Menu, Please Select B
+                      [2] To enumerate active directory
+                      [3] To run Nmap scans
+                      [4] To run SMB Prowler
+                      [B] To return to the main menu
   "
  $EOption = Read-Host "                     Please Choose an option"
 
@@ -223,6 +223,7 @@ function Nmap_network_discovery_menu {
                                        [PortScan]     To run a Port Scan
                                        [StealthScan]  To run a Stealthy port Scan
                                        [SMBScan]      To run a SMB Security Mode Scan
+                                       [CipherScan]   To run a Cipher Scan
 
                                        [Documentation] To read Documentation
                                                                                 
@@ -234,6 +235,7 @@ switch ($NOption) {
   PortScan { nmap_scan }
   stealthscan { nmap_scan }
   SMBScan { nmap_scan }
+  cipherscan { nmap_scan }
   Documentation { nmap_documentation }
 }
 }
