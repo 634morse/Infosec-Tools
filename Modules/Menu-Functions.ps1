@@ -25,7 +25,7 @@ function Welcome_Menu {
                                                                                                                                                  
                             [1] To view documentation                                                                                 
                             [2] To Run Enumeration/Discovery                                                                        
-                            [3] To to take a look at the Random Tools                                                        
+                            [3] To Run Forensics                                                        
                             [U] To view dependecy versions/Updates                                                          
                             [Q] To Quite                                                                         
                                                                                                                                                 
@@ -36,6 +36,7 @@ function Welcome_Menu {
     Switch ($Option) {
             1 { Documentation }
             2 { Enumeration_Menu_1 }
+            3 { Forensics_Menu }
             U { update_menu }
             s { SMB_Prowler_Menu }
             Q { Exit }
@@ -288,6 +289,40 @@ Function SMB_Prowler_Menu {
 
   }
 }
+
+Function Forensics_Menu {
+  Clear-Host
+  $Host.UI.RawUI.ForegroundColor = "Blue"
+  Write-Host "
+                                             ______                           _          
+                                            / ____/___  ________  ____  _____(_)_________
+                                           / /_  / __ \/ ___/ _ \/ __ \/ ___/ / ___/ ___/
+                                          / __/ / /_/ / /  /  __/ / / (__  ) / /__(__  ) 
+                                         /_/    \____/_/   \___/_/ /_/____/_/\___/____/                    
+
+                                                  Incident
+                                                            Response
+                                                                      Tools
+                                              
+                                            [1] Run Virus Total Searches
+
+
+
+
+
+
+  "
+  do {
+    $option = read-host "                      
+                                        Select the tools you wish to use"
+  } until ($option -eq "1")
+
+  switch ($option) {
+    1 { }
+  }
+}
+
+
 
 
                                                                                                                                                                  
