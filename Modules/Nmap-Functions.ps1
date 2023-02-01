@@ -49,6 +49,7 @@ function nmap_scan {
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
                 $ParseScan | select IPv4, Status, HostName | export-csv $ExportPath -Append -NoTypeInformation
             }
+            #######
             If ($NOption -eq "portscan") {
                 If ($Ports -eq "All") {
                     $scan = nmap -iL $Ranges -oX .\temp\portscan-$date.xml
@@ -59,6 +60,7 @@ function nmap_scan {
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
                 $ParseScan | select IPv4, Status, Ports, HostName | export-csv $ExportPath -Append -NoTypeInformation
             }
+            #######
             If ($NOption -eq "stealthscan") {
                 If ($Ports -eq "All") {
                     $scan = nmap -iL $Ranges -sS -oX .\temp\portscan-$date.xml
@@ -69,6 +71,7 @@ function nmap_scan {
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
                 $ParseScan | select IPv4, Status, Ports, HostName | export-csv $ExportPath -Append -NoTypeInformation
             }
+            #######
             If ($NOption -eq "smbscan") {
                 $scan = nmap -p 445 --script smb2-security-mode.nse -iL $Ranges -oX .\temp\smbscan-$date.xml
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\smbscan-$date.xml
@@ -91,6 +94,7 @@ function nmap_scan {
                     $Table | select IPv4, SMB_Version, SMB_Status, Port_status | export-csv $ExportPath -append -notypeinformation
                 }
             }
+            #######
             If ($NOption -eq "CipherScan") {
                 If ($Ports -eq "All") {
                     $scan = nmap -iL $Ranges --script ssl-enum-ciphers.nse -oX .\temp\cipherscan-$date.xml
@@ -121,6 +125,7 @@ function nmap_scan {
                 $scan = nmap -iL $Ranges -sn -oX .\temp\pingscan-$date.xml
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
             }
+            #######
             If ($NOption -eq "portscan") {
                 If ($Ports -eq "All") {
                     $scan = nmap $-iL $Ranges -oX .\temp\portscan-$date.xml
@@ -130,6 +135,7 @@ function nmap_scan {
                 }
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
             }
+            #######
             If ($NOption -eq "stealthscan") {
                 If ($Ports -eq "All") {
                     $scan = nmap -iL $Ranges -sS -oX .\temp\stealthscan-$date.xml
@@ -139,10 +145,12 @@ function nmap_scan {
                 }
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
             }
+            #######
             If ($NOption -eq "smbscan") {
                 $scan = nmap -p 445 --script smb2-security-mode.nse -iL $Ranges -oX .\temp\smbscan-$date.xml
                 $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\smbscan-$date.xml
             }
+            #######
             If ($NOption -eq "CipherScan") {
                 If ($Ports -eq "All") {
                     $scan = nmap -iL $Ranges --script ssl-enum-ciphers.nse -oX .\temp\cipherscan-$date.xml
@@ -161,6 +169,7 @@ function nmap_scan {
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
             $ParseScan | select IPv4, Status, HostName | export-csv $ExportPath -Append -NoTypeInformation
         }
+        #######
         If ($NOption -eq "portscan") {
             If ($Ports -eq "All") {
                 $scan = nmap $Ranges -oX .\temp\portscan-$date.xml
@@ -171,6 +180,7 @@ function nmap_scan {
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
             $ParseScan | select IPv4, Status, HostName | export-csv $ExportPath -Append -NoTypeInformation
         }
+        #######
         If ($NOption -eq "stealthscan") {
             If ($Ports -eq "All") {
                 $scan = nmap $Ranges -sS -oX .\temp\stealthscan-$date.xml
@@ -181,6 +191,7 @@ function nmap_scan {
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
             $ParseScan | select IPv4, Status, Ports, HostName | export-csv $ExportPath -Append -NoTypeInformation
         }
+        #######
         If ($NOption -eq "smbscan") {
             $scan = nmap -p 445 --script smb2-security-mode.nse $Ranges -oX .\temp\smbscan-$date.xml
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\smbscan-$date.xml
@@ -203,6 +214,7 @@ function nmap_scan {
                 $Table | select IPv4, SMB_Version, SMB_Status, Port_status | export-csv $ExportPath -append -notypeinformation
             }
         }
+        #######
         If ($NOption -eq "CipherScan") {
             If ($Ports -eq "All") {
                 $scan = nmap $Ranges --script ssl-enum-ciphers.nse -oX .\temp\cipherscan-$date.xml
@@ -224,7 +236,18 @@ function nmap_scan {
                     $Table | select IPv4, Ciphers | export-csv $ExportPath -append -notypeinformation
                 }
             }
-        }    
+        }
+        #######
+        If ($NOption -eq "ftpanon") {
+            If ($Ports -eq "All") {
+                $scan = nmap $Ranges --script ftp-anon.nse -oX .\temp\ftpanpnscan-$date.xml
+            }
+            else {
+                $Scan = nmap $Ranges -p $Ports --script ftp-anon.nse -oX .\temp\ftpanpnscan-$date.xml
+            } 
+            $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\ftpanpnscan-$date.xml
+            
+        } 
         write-output = "done scanning, csv file stored here: $ExportPath"
     }
     elseif ($option1 -eq "2" -and $Export -eq "n") {
@@ -233,6 +256,7 @@ function nmap_scan {
             $scan = nmap $Ranges -sn -oX .\temp\pingscan-$date.xml
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\pingscan-$date.xml
         }
+        #######
         If ($NOption -eq "portscan") {
             If ($Ports -eq "All") {
                 $scan = nmap $Ranges -oX .\temp\portscan-$date.xml
@@ -242,6 +266,7 @@ function nmap_scan {
             }
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\portscan-$date.xml
         }
+        #######
         If ($NOption -eq "stealthscan") {
             If ($Ports -eq "All") {
                 $scan = nmap $Ranges -sS -oX .\temp\stealthscan-$date.xml
@@ -251,10 +276,12 @@ function nmap_scan {
             }
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\stealthscan-$date.xml
         }
+        #######
         If ($NOption -eq "smbscan") {
             $scan = nmap -p 445 --script smb2-security-mode.nse $Ranges -oX .\temp\smbscan-$date.xml
             $global:ParseScan = .\Dependencies\Parse-Nmap.ps1 .\temp\smbscan-$date.xml
         }
+        #######
         If ($NOption -eq "CipherScan") {
             If ($Ports -eq "All") {
                 $scan = nmap $Ranges --script ssl-enum-ciphers.nse -oX .\temp\cipherscan-$date.xml

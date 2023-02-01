@@ -24,7 +24,7 @@ function Welcome_Menu {
     $Available_Updates                                                                                                                           
                                                                                                                                                  
                             [1] To view documentation                                                                                 
-                            [2] To Run Enumeration/Discovery                                                                        
+                            [2] To Discover,Enumerate amd Exploit                                                                        
                             [3] To Run Forensics                                                        
                             [U] To view dependecy versions/Updates                                                          
                             [Q] To Quite                                                                         
@@ -83,35 +83,42 @@ switch ($option) {
 
 function Enumeration_Menu_1 {
   clear-host
-  Write-output "
-                       _____  _                                                                      
-                      |  __ \(_)                                                                     
-                      | |  | |_ ___  ___ _____   _____ _ __ _   _                                    
-                      | |  | | / __|/ __/ _ \ \ / / _ \ '__| | | |                                   
-                      | |__| | \__ \ (_| (_) \ V /  __/ |  | |_| |                                   
-                      |_____/|_|___/\___\___/ \_/ \___|_|   \__, |                 _   _             
-                                      |  ____|               __/ |                | | (_)            
-                                      | |__   _ __  _   _ _ |___/_   ___ _ __ __ _| |_ _  ___  _ __  
-                                      |  __| | '_ \| | | | '_ ` _ \ / _ \ '__/ _` | __| |/ _ \| '_ \ 
-                                      | |____| | | | |_| | | | | | |  __/ | | (_| | |_| | (_) | | | |
-                                      |______|_| |_|\__,_|_| |_| |_|\___|_|  \__,_|\__|_|\___/|_| |_|
-                                                                                 
-                                                                                                                                                  
-                                Welcome to the Discovery/Enumeration Menu! 
-  
-                      [1] If you want to gather local information on Host(s,) Please Select 1
-                      [2] To enumerate active directory
-                      [3] To run Nmap scans
-                      [4] To run SMB Prowler
-                      [B] To return to the main menu
-  "
- $EOption = Read-Host "                     Please Choose an option"
+  Write-Host "
+                                 _   _   _   _   _   _   _   _                                 
+                                / \ / \ / \ / \ / \ / \ / \ / \                                
+                               ( D | i | s | c | o | v | e | r )                               
+                                \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/   
+" -ForegroundColor darkgreen  
+Write-Host "                           
+                                                     _   _   _   _   _   _   _   _   _              
+                                                    / \ / \ / \ / \ / \ / \ / \ / \ / \             
+                                                   ( E | n | u | m | e | r | a | t | e )            
+                                                    \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/     
+" -ForegroundColor darkYellow
+Write-Host "
+                                                                             _   _   _   _   _   _   _   
+                                                                            / \ / \ / \ / \ / \ / \ / \  
+                                                                           ( E | x | p | l | o | i | t ) 
+                                                                            \_/ \_/ \_/ \_/ \_/ \_/ \_/ 
+    " -ForegroundColor darkRed 
+Write-Host "                                                                              
+                                                                                                                                                   
+                                            [1] Enumerate local information on Hosts
+                                            [2] Enumerate active directory
+                                            [3] Run Nmap scans
+                                            [4] Run SMB Prowler
+                                            [5] Run Beanshooter
+                                            [B] To return to the main menu
+  " -ForegroundColor Gray
+ $EOption = Read-Host "
+                                            Please Choose an option"
 
   Switch ($EOption) {
       1 { Local_Enumerations_Menu }
       2 { AD_Enumeration_Menu }
       3 { Nmap_network_discovery_menu }
       4 { SMB_Prowler_Menu }
+      5 { Beanshooter_Menu }
       B { Welcome_Menu }
       Q { Exit }
   }
@@ -220,11 +227,12 @@ function Nmap_network_discovery_menu {
       ##          ##          ##           ##          ##     # |_|\_||_| |_||_n_||_|   #     ##          ##          ##          ##          ##
 #####################################################################################################################################################                       
   
-                                       [PingScan]     To run a Ping Scan
-                                       [PortScan]     To run a Port Scan
-                                       [StealthScan]  To run a Stealthy port Scan
-                                       [SMBScan]      To run a SMB Security Mode Scan
-                                       [CipherScan]   To run a Cipher Scan
+                                       [PingScan]      Run a Ping Scan
+                                       [PortScan]      Run a Port Scan
+                                       [StealthScan]   Run a Stealthy port Scan
+                                       [SMBScan]       Run a SMB Security Mode Scan
+                                       [CipherScan]    Run a Cipher Scan
+                                       [FtpAnon]       Run a FTP Anon Scan
 
                                        [Documentation] To read Documentation
                                                                                 
@@ -237,6 +245,7 @@ switch ($NOption) {
   stealthscan { nmap_scan }
   SMBScan { nmap_scan }
   cipherscan { nmap_scan }
+  ftpanon { nmap_scan }
   Documentation { nmap_documentation }
 }
 }
@@ -320,6 +329,40 @@ Function Forensics_Menu {
   switch ($option) {
     1 { }
   }
+}
+
+Function Beanshooter_Menu {
+  Clear-Host
+  Set_Beanshooter_var
+  $Host.UI.RawUI.ForegroundColor = "Yellow"
+  Write-Host "
+  
+                                 ____  ____   __   __ _  ____  _  _   __    __  ____  ____  ____ 
+                                (  _ \(  __) / _\ (  ( \/ ___)/ )( \ /  \  /  \(_  _)(  __)(  _ \
+                                 ) _ ( ) _) /    \/    /\___ \) __ ((  O )(  O ) )(   ) _)  )   /
+                                (____/(____)\_/\_/\_)__)(____/\_)(_/ \__/  \__/ (__) (____)(__\_)
+                                        
+                                        
+                                        Full credit to Tobias Neitzel and contributors
+                                        https://github.com/qtc-de/beanshooter
+
+                                        [1] Enumerate for possible JMX vulnerabilities
+
+                                        [2] Deploy TonkaBean and create a command shell
+
+                                        [H] Help/Readme
+                                         
+  "
+  do {
+    $option = read-host "                      
+                                        Select an option"
+  } until ($option -eq "1" -or $option -eq "2" -or $option -eq "H")
+
+  switch ($option) {
+    1 { }
+    H { Beanshooter_Help }
+  } 
+
 }
 
 
